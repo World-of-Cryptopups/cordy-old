@@ -7,12 +7,12 @@ import (
 	e "github.com/World-of-Cryptopups/roleroll-new/lib/errors"
 	fc "github.com/World-of-Cryptopups/roleroll-new/lib/fauna"
 	rc "github.com/World-of-Cryptopups/roleroll-new/lib/redis"
+	"github.com/go-redis/redis/v8"
 
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/gateway"
 	"github.com/enescakir/emoji"
 	f "github.com/fauna/faunadb-go/v4/faunadb"
-	"github.com/go-redis/redis/v8"
 )
 
 func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (string, error) {
@@ -27,11 +27,18 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 
 	// get initial datas from redis
 	r := rc.Client()
-	val, err := r.HGetAll(rc.Ctx, "_token_"+token).Result()
-	if err == redis.Nil {
+
+	// check first if token / key exists from redis
+	_e := r.Exists(rc.Ctx, "_token_"+token).Val()
+	if _e == 0 {
 		// key does not exist
 		//lint:ignore ST1005 // I know what I am doing!
 		return "", fmt.Errorf("I don't know that **TOKEN**, if you are not sure on what to do, please contact an admin or mod.")
+	}
+
+	val, err := r.HGetAll(rc.Ctx, "_token_"+token).Result()
+	if err == redis.Nil {
+		return e.FailedCommand("get all redis keys", err)
 	}
 
 	// fauna client
