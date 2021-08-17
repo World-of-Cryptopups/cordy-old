@@ -1,4 +1,4 @@
-package lib
+package redis
 
 import (
 	"context"
@@ -12,7 +12,5 @@ var Ctx = context.Background()
 func Client() *redis.Client {
 	opt, _ := redis.ParseURL(os.Getenv("REDIS"))
 
-	rdb := redis.NewClient(opt)
-
-	return rdb
+	return redis.NewClient(opt)
 }
