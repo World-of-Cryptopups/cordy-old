@@ -4,23 +4,16 @@ import (
 	"fmt"
 	"strings"
 
+	e "github.com/World-of-Cryptopups/roleroll-new/lib/errors"
 	fc "github.com/World-of-Cryptopups/roleroll-new/lib/fauna"
 	rc "github.com/World-of-Cryptopups/roleroll-new/lib/redis"
+
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/gateway"
 	"github.com/enescakir/emoji"
 	f "github.com/fauna/faunadb-go/v4/faunadb"
 	"github.com/go-redis/redis/v8"
 )
-
-type User struct {
-	DiscordID     string   `fauna:"discordId,omitempty"`
-	AvatarURL     string   `fauna:"avatarUrl,omitempty"`
-	Wallets       []string `fauna:"wallets,omitempty"`
-	DefaultWallet string   `fauna:"defaultWallet,omitempty"`
-	Type          string   `fauna:"type,omitempty"`
-	Token         string   `fauna:"token,omitempty"`
-}
 
 func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (string, error) {
 	if args == "" {
@@ -45,25 +38,23 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 	fauna := fc.Client()
 
 	// check if user is already registered
-	_registered, err := fauna.Query(f.Exists(f.MatchTerm(f.Index("userByDiscordId"), _discordId)))
+	_registered, err := fc.CheckUser(_discordId)
 	if err != nil {
-		return FailedCommand("check if user is registered", err)
+		return e.FailedCommand("check if user is registered", err)
 	}
-	var registered bool
-	_registered.Get(&registered)
-	if registered {
-		return FailedMessage("You have already registered! If you want to change your acc, please contact an admin or mod.", err)
+	if _registered {
+		return e.FailedMessage("You have already registered! If you want to change your acc, please contact an admin or mod.", err)
 	}
 
 	// check if token exists in fauna
 	check, err := fauna.Query(f.Exists(f.MatchTerm(f.Index("userByToken"), token)))
 	if err != nil {
-		return FailedCommand("check if token exists already", err)
+		return e.FailedCommand("check if token exists already", err)
 	}
 	var ccc bool
 	check.Get(&ccc)
 	if ccc {
-		return FailedMessage("This **TOKEN** has already been registered! If you did not register this, please contact an admin or mod.", err)
+		return e.FailedMessage("This **TOKEN** has already been registered! If you did not register this, please contact an admin or mod.", err)
 	}
 
 	// create user
@@ -72,7 +63,7 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 
 	_, err = fauna.Query(f.Create(f.Collection("users"), f.Obj{"data": User{DiscordID: c.Author.ID.String(), AvatarURL: c.Author.AvatarURL(), Wallets: []string{_wallet}, DefaultWallet: _wallet, Type: _type, Token: token}}))
 	if err != nil {
-		return FailedCommand("create a new user", err)
+		return e.FailedCommand("create a new user", err)
 	}
 
 	return fmt.Sprintf("%v Successfully authenticated <@!%s>!", emoji.CheckBoxWithCheck, c.Author.ID), nil
