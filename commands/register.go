@@ -7,6 +7,7 @@ import (
 	e "github.com/World-of-Cryptopups/roleroll-new/lib/errors"
 	fc "github.com/World-of-Cryptopups/roleroll-new/lib/fauna"
 	rc "github.com/World-of-Cryptopups/roleroll-new/lib/redis"
+	"github.com/World-of-Cryptopups/roleroll-new/stuff"
 	"github.com/go-redis/redis/v8"
 
 	"github.com/diamondburned/arikawa/v2/bot"
@@ -64,13 +65,47 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		return e.FailedMessage("This **TOKEN** has already been registered! If you did not register this, please contact an admin or mod.", err)
 	}
 
-	// create user
 	_wallet := val["wallet"]
 	_type := val["type"]
 
-	_, err = fauna.Query(f.Create(f.Collection("users"), f.Obj{"data": User{DiscordID: c.Author.ID.String(), AvatarURL: c.Author.AvatarURL(), Wallets: []string{_wallet}, DefaultWallet: _wallet, Type: _type, Token: token}}))
+	// confirm season pass info
+	cfPass, err := stuff.ConfirmSeasonOnePass(_wallet)
+	if err != nil {
+		return e.FailedCommand("confirm seasonpass", err)
+	}
+
+	// create user
+	_user_ := User{
+		DiscordID:       c.Author.ID.String(),
+		DiscordUsername: c.Author.Username,
+		AvatarURL:       c.Author.AvatarURL(),
+		Wallets:         []string{_wallet},
+		DefaultWallet:   _wallet,
+		Type:            _type,
+		Token:           token,
+		SeasonPasses:    []UserSeasonPasses{{Season: cfPass.Season, Title: cfPass.Pass}},
+	}
+	user, err := fauna.Query(f.Create(f.Collection("users"), f.Obj{"data": _user_}))
 	if err != nil {
 		return e.FailedCommand("create a new user", err)
+	}
+
+	// fetch season pass details
+	passDetails, err := stuff.GetSeasonOnePass(_wallet)
+	if err != nil {
+		return e.FailedCommand("get season one pass info", err)
+	}
+
+	var userRef f.RefV
+	user.At(f.ObjKey("ref")).Get(&userRef)
+
+	// create a new season pass document
+	_userPass_ := UserSeasonPass{
+		User: userRef,
+		DPS:  passDetails.DPS,
+	}
+	if _, err = fauna.Query(f.Create(f.Collection("seasonpass"), f.Obj{"data": _userPass_})); err != nil {
+		return e.FailedCommand("create season pass document", err)
 	}
 
 	return fmt.Sprintf("%v Successfully authenticated <@!%s>!", emoji.CheckBoxWithCheck, c.Author.ID), nil
