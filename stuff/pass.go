@@ -7,11 +7,11 @@ type SeasonPassVerify struct {
 }
 
 type SeasonPass struct {
-	Wallet string        `json:"wallet"`
-	Season string        `json:"season"`
-	DPS    SeasonPassDPS `json:"dps"`
+	Wallet string     `json:"wallet"`
+	Season string     `json:"season"`
+	DPS    DPSDetails `json:"dps"`
 }
-type SeasonPassDPS struct {
+type DPSDetails struct {
 	Pupskins int `json:"pupskins" fauna:"pupskins"`
 	Pupcards int `json:"pupcards" fauna:"pupcards"`
 	Pupitems struct {
