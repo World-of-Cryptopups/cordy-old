@@ -41,7 +41,7 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 	client := fc.Client()
 
 	_query, err := client.Query(f.Let().Bind("user", f.Get(f.MatchTerm(f.Index("userByDiscordId"), _discordId))).In(
-		f.Map(f.Paginate(f.Union(f.MatchTerm(f.Index("passByUser"), f.Select("ref", f.Var("user"))), f.MatchTerm(f.Index("passByUser"), f.Select("ref", f.Var("user")))), f.Size(1)),
+		f.Map(f.Paginate(f.MatchTerm(f.Index("passByUser"), f.Select("ref", f.Var("user"))), f.Size(1)),
 			f.Lambda("dps", f.Get(f.Var("dps"))))))
 	if err != nil {
 		return e.FailedCommand("get user seasonpass dps", err)
@@ -52,7 +52,12 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 		return e.FailedCommand("decode dps response", err)
 	}
 
-	data := _dps[0].Data
+	var data UserSeasonPass
+	for _, v := range _dps {
+		if v.Data.Season == season {
+			data = v.Data
+		}
+	}
 
 	totalDps := data.DPS.Pupcards + data.DPS.Pupskins + data.DPS.Pupitems.Real
 
