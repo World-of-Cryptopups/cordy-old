@@ -30,5 +30,6 @@ type UserSeasonPasses struct {
 type UserSeasonPass struct {
 	User   f.RefV              `fauna:"user"`
 	Season string              `fauna:"season,omitempty"`
-	DPS    stuff.SeasonPassDPS `fauna:"season,omitempty"`
+	DPS    stuff.SeasonPassDPS `fauna:"dps,omitempty"`
+	Title  string              `fauna:"title,omitempty"`
 }

@@ -17,6 +17,8 @@ import (
 )
 
 func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (string, error) {
+	b.Ctx.Typing(c.ChannelID)
+
 	if args == "" {
 		return "", fmt.Errorf("%v No TOKEN provided", emoji.CrossMark)
 	}
@@ -101,8 +103,10 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 
 	// create a new season pass document
 	_userPass_ := UserSeasonPass{
-		User: userRef,
-		DPS:  passDetails.DPS,
+		User:   userRef,
+		Season: cfPass.Season,
+		DPS:    passDetails.DPS,
+		Title:  cfPass.Pass,
 	}
 	if _, err = fauna.Query(f.Create(f.Collection("seasonpass"), f.Obj{"data": _userPass_})); err != nil {
 		return e.FailedCommand("create season pass document", err)

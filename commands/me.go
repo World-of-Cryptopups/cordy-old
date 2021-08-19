@@ -13,6 +13,8 @@ import (
 
 // Ping command.
 func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
+	b.Ctx.Typing(c.ChannelID)
+
 	// get discordid
 	_discordId := c.Author.ID.String()
 
@@ -63,7 +65,9 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 			Value:  _provider,
 			Inline: true,
 		}, {
-			Name: "\u200b", Value: "\u200b", Inline: false,
+			Name:   "🛡 Season One Pass",
+			Value:  user.SeasonPasses[0].Title,
+			Inline: false,
 		}},
 		Thumbnail: &discord.EmbedThumbnail{
 			URL: c.Author.AvatarURL(),
