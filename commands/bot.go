@@ -33,3 +33,8 @@ type UserSeasonPass struct {
 	DPS    stuff.SeasonPassDPS `fauna:"dps,omitempty"`
 	Title  string              `fauna:"title,omitempty"`
 }
+
+type QueryUserSeasonPass struct {
+	Ref  f.RefV         `fauna:"ref"`
+	Data UserSeasonPass `fauna:"data"`
+}

@@ -19,12 +19,8 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 	_discordId := c.Author.ID.String()
 
 	// check if user is already registered
-	_registered, err := fc.CheckUser(_discordId)
-	if err != nil {
-		return e.FailedCommand("check if user is registered", err)
-	}
-	if !_registered {
-		return e.FailedMessage("You are not registered! You can register by sending `>register {your-token}`.", err)
+	if _, err := fc.IsUserRegistered(_discordId); err != nil {
+		return "", err
 	}
 
 	// get client

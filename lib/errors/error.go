@@ -7,10 +7,12 @@ func FailedCommand(command string, err error) (string, error) {
 	// print error
 	fmt.Println("command: "+command, err)
 
-	return FailedMessage("There was a problem while trying to register, if the problem persists, please contact an admin and try again :slight_smile:.", err)
+	return FailedMessage("There was a problem while trying to execute the command, if the problem persists, please contact an admin and try again :slight_smile:.", err)
 }
 
 // FailedMessage is the message send on error or failed command
 func FailedMessage(message string, err error) (string, error) {
+	fmt.Println(err)
+
 	return "", fmt.Errorf(message)
 }
