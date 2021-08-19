@@ -76,6 +76,15 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		return e.FailedCommand("confirm seasonpass", err)
 	}
 
+	// fetch initial dps, call the function
+	if err := stuff.FetchDPS(stuff.UserDPSUser{
+		Id:       c.Author.ID.String(),
+		Username: c.Author.Username,
+		Avatar:   c.Author.AvatarURL(),
+	}, _wallet); err != nil {
+		return e.FailedCommand("error in calling the api to get initial dps", err)
+	}
+
 	// create user
 	_user_ := User{
 		DiscordID:       c.Author.ID.String(),
