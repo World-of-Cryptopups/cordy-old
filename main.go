@@ -8,6 +8,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 
 	"github.com/diamondburned/arikawa/v2/bot"
+	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
 func main() {
@@ -22,6 +23,12 @@ func main() {
 	bot.Run(token, commands, func(ctx *bot.Context) error {
 		ctx.HasPrefix = bot.NewPrefix(">")
 		ctx.EditableCommands = true
+
+		ctx.Gateway.AddIntents(gateway.IntentDirectMessages)
+		ctx.Gateway.AddIntents(gateway.IntentGuildMessages)
+
+		// run task (disable for now)
+		// go task.AutoDPS(ctx)
 
 		return nil
 	})

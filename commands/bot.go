@@ -22,6 +22,11 @@ type User struct {
 	SeasonPasses    []UserSeasonPasses `fauna:"seasonPasses"`
 }
 
+type QueryUser struct {
+	Ref  f.RefV `fauna:"ref"`
+	Data User   `fauna:"data"`
+}
+
 type UserSeasonPasses struct {
 	Season string `fauna:"season"`
 	Title  string `fauna:"title"`
