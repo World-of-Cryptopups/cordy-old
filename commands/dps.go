@@ -43,7 +43,7 @@ func (b *Bot) Dps(c *gateway.MessageCreateEvent) (interface{}, error) {
 		Fields: []discord.EmbedField{
 			{
 				Name:   "🎴 Puppy Cards",
-				Value:  fmt.Sprint(data.DPS.Pupskins),
+				Value:  fmt.Sprint(data.DPS.Pupcards),
 				Inline: true,
 			},
 			{
@@ -53,7 +53,7 @@ func (b *Bot) Dps(c *gateway.MessageCreateEvent) (interface{}, error) {
 			},
 			{
 				Name:   "⚔️ Pup Items (Raw)",
-				Value:  fmt.Sprint(data.DPS.Pupitems.Real),
+				Value:  fmt.Sprint(data.DPS.Pupitems.Raw),
 				Inline: true,
 			},
 			{
