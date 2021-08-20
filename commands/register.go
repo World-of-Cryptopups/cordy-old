@@ -11,6 +11,7 @@ import (
 	"github.com/go-redis/redis/v8"
 
 	"github.com/diamondburned/arikawa/v2/bot"
+	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 	"github.com/enescakir/emoji"
 	f "github.com/fauna/faunadb-go/v4/faunadb"
@@ -77,12 +78,16 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 	}
 
 	// fetch initial dps, call the function
-	if err := stuff.FetchDPS(stuff.UserDPSUser{
+	if d, err := stuff.FetchDPS(stuff.UserDPSUser{
 		Id:       c.Author.ID.String(),
 		Username: c.Author.Username,
 		Avatar:   c.Author.AvatarURL(),
 	}, _wallet); err != nil {
 		return e.FailedCommand("error in calling the api to get initial dps", err)
+	} else {
+		totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
+
+		stuff.HandleUserRole(b.Ctx, discord.GuildID(stuff.GuildID()), int(c.Author.ID), totalDPS)
 	}
 
 	// create user

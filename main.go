@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/World-of-Cryptopups/cordy/commands"
+	"github.com/World-of-Cryptopups/cordy/task"
 	_ "github.com/joho/godotenv/autoload"
 
 	"github.com/diamondburned/arikawa/v2/bot"
@@ -28,7 +29,7 @@ func main() {
 		ctx.Gateway.AddIntents(gateway.IntentGuildMessages)
 
 		// run task (disable for now)
-		// go task.AutoDPS(ctx)
+		go task.AutoDPS(ctx)
 
 		return nil
 	})

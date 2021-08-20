@@ -9,7 +9,7 @@ import (
 
 type UserDPSInfo struct {
 	Wallet string      `json:"wallet"`
-	Key    string      `json:"key"`
+	Key    string      `json:"key,omitempty"`
 	User   UserDPSUser `json:"user"`
 	DPS    DPSDetails  `json:"dps"`
 }
@@ -21,9 +21,18 @@ type UserDPSUser struct {
 }
 
 // FetchDPS is a fetcher to call the endpoint and save to db.
-func FetchDPS(user UserDPSUser, wallet string) error {
-	_, err := utils.PostFetcher(user, os.Getenv("DPS_FETCH")+wallet)
-	return err
+func FetchDPS(user UserDPSUser, wallet string) (UserDPSInfo, error) {
+	r, err := utils.PostFetcher(user, os.Getenv("DPS_FETCH")+wallet)
+	if err != nil {
+		return UserDPSInfo{}, err
+	}
+
+	var data UserDPSInfo
+	if err := json.Unmarshal(r, &data); err != nil {
+		return UserDPSInfo{}, err
+	}
+
+	return data, nil
 }
 
 // Get the DPS of a certain discordId user.
