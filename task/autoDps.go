@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/World-of-Cryptopups/roleroll-new/commands"
-	fc "github.com/World-of-Cryptopups/roleroll-new/lib/fauna"
-	"github.com/World-of-Cryptopups/roleroll-new/stuff"
+	"github.com/World-of-Cryptopups/cordy/commands"
+	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
+	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/diamondburned/arikawa/v2/bot"
 	f "github.com/fauna/faunadb-go/v4/faunadb"
 )

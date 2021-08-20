@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	e "github.com/World-of-Cryptopups/roleroll-new/lib/errors"
-	fc "github.com/World-of-Cryptopups/roleroll-new/lib/fauna"
-	rc "github.com/World-of-Cryptopups/roleroll-new/lib/redis"
-	"github.com/World-of-Cryptopups/roleroll-new/stuff"
+	e "github.com/World-of-Cryptopups/cordy/lib/errors"
+	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
+	rc "github.com/World-of-Cryptopups/cordy/lib/redis"
+	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/go-redis/redis/v8"
 
 	"github.com/diamondburned/arikawa/v2/bot"

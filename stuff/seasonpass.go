@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/World-of-Cryptopups/roleroll-new/utils"
+	"github.com/World-of-Cryptopups/cordy/utils"
 )
 
 // GetSeasonOnePass is a getter for getting the Season One Pass DPS.

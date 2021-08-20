@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	e "github.com/World-of-Cryptopups/roleroll-new/lib/errors"
-	fc "github.com/World-of-Cryptopups/roleroll-new/lib/fauna"
-	"github.com/World-of-Cryptopups/roleroll-new/utils"
+	e "github.com/World-of-Cryptopups/cordy/lib/errors"
+	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
+	"github.com/World-of-Cryptopups/cordy/utils"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"

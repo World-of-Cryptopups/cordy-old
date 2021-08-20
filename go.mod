@@ -1,4 +1,4 @@
-module github.com/World-of-Cryptopups/roleroll-new
+module github.com/World-of-Cryptopups/cordy
 
 go 1.16
 

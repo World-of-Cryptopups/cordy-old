@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	e "github.com/World-of-Cryptopups/roleroll-new/lib/errors"
-	fc "github.com/World-of-Cryptopups/roleroll-new/lib/fauna"
-	"github.com/World-of-Cryptopups/roleroll-new/stuff"
+	e "github.com/World-of-Cryptopups/cordy/lib/errors"
+	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
+	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )

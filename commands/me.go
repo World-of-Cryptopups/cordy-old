@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	e "github.com/World-of-Cryptopups/roleroll-new/lib/errors"
-	fc "github.com/World-of-Cryptopups/roleroll-new/lib/fauna"
+	e "github.com/World-of-Cryptopups/cordy/lib/errors"
+	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 	f "github.com/fauna/faunadb-go/v4/faunadb"

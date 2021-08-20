@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/World-of-Cryptopups/roleroll-new/commands"
+	"github.com/World-of-Cryptopups/cordy/commands"
 	_ "github.com/joho/godotenv/autoload"
 
 	"github.com/diamondburned/arikawa/v2/bot"

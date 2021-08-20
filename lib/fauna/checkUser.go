@@ -1,7 +1,7 @@
 package fauna
 
 import (
-	e "github.com/World-of-Cryptopups/roleroll-new/lib/errors"
+	e "github.com/World-of-Cryptopups/cordy/lib/errors"
 	f "github.com/fauna/faunadb-go/v4/faunadb"
 )
 
