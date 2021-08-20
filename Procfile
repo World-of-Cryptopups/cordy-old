@@ -1,1 +1,1 @@
-worker: ./cordy
+worker: cordy
