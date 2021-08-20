@@ -1,3 +1,5 @@
+// +heroku goVersion go1.16
+
 module github.com/World-of-Cryptopups/cordy
 
 go 1.16
