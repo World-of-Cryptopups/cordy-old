@@ -72,6 +72,7 @@ var Colors = map[string]string{
 	"red":    "#e91e63",
 	"orange": "#e74c3c",
 	"white":  "#ffffff",
+	"grey":   "#95a5a6",
 }
 
 // HasCurrentRole gets the member's current role.
