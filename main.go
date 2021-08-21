@@ -5,10 +5,10 @@ import (
 	"os"
 	"strconv"
 
+	_ "github.com/joho/godotenv/autoload" // this should be first
+
 	"github.com/World-of-Cryptopups/cordy/commands"
 	"github.com/World-of-Cryptopups/cordy/task"
-	_ "github.com/joho/godotenv/autoload"
-
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
