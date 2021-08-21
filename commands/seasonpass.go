@@ -7,6 +7,7 @@ import (
 
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
 	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
+	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/World-of-Cryptopups/cordy/utils"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
@@ -67,6 +68,7 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 			Name: c.Author.Username,
 			Icon: c.Author.AvatarURL(),
 		},
+		Color: stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
 		Title: fmt.Sprintf("Season %s Pass", strings.Title(data.Season)),
 		// Description: fmt.Sprintf("Your total **DPS** accumulated for Season %s", strings.Title(data.Season)),
 		Thumbnail: &discord.EmbedThumbnail{

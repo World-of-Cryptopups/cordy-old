@@ -6,6 +6,7 @@ import (
 
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
 	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
+	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 	f "github.com/fauna/faunadb-go/v4/faunadb"
@@ -48,6 +49,7 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 	// so, use the one who called it
 	embed := &discord.Embed{
 		Title:       c.Author.Username,
+		Color:       stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
 		Description: "Your profile information.",
 		Author: &discord.EmbedAuthor{
 			Name: fmt.Sprintf("[me] %s", c.Author.Username),
