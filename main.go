@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/World-of-Cryptopups/cordy/commands"
 	"github.com/World-of-Cryptopups/cordy/task"
@@ -25,11 +26,18 @@ func main() {
 		ctx.HasPrefix = bot.NewPrefix(">")
 		ctx.EditableCommands = true
 
+		// DO NOT SEND `unknown command`
+		ctx.SilentUnknown.Command = true
+		ctx.SilentUnknown.Subcommand = true
+
 		ctx.Gateway.AddIntents(gateway.IntentDirectMessages)
 		ctx.Gateway.AddIntents(gateway.IntentGuildMessages)
 
-		// run task (disable for now)
-		go task.AutoDPS(ctx)
+		// DO NOT RUN THE FETCHER ON DEVELOPMENT MODE
+		if dev, _ := strconv.ParseBool(os.Getenv("DEV_MODE")); !dev {
+			// run task (disable for now)
+			go task.AutoDPS(ctx)
+		}
 
 		return nil
 	})
