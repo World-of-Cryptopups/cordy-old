@@ -35,6 +35,7 @@ func (b *Bot) Dps(c *gateway.MessageCreateEvent) (interface{}, error) {
 			Name: c.Author.Username,
 			Icon: c.Author.AvatarURL(),
 		},
+		Color: stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
 		Title: "Current DPS Stats",
 		// Description: fmt.Sprintf("Your total **DPS** accumulated for Season %s", strings.Title(data.Season)),
 		Thumbnail: &discord.EmbedThumbnail{

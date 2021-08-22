@@ -2,7 +2,10 @@ package stuff
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
+	"github.com/World-of-Cryptopups/cordy/utils"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 )
@@ -13,41 +16,43 @@ type DPSStats struct {
 	Color  string         // Color of the Role
 }
 
+var initRoles = strings.Split(os.Getenv("ROLES"), ",")
+
 // Roles is the roles and
 var Roles = map[int]DPSStats{
 	3000: {
 		Title:  "Warrior Pups",
-		RoleID: 878236495926919208, // change this IDs in production
+		RoleID: discord.RoleID(utils.ConvertInt(initRoles[0])), // change this IDs in production
 		Color:  "green",
 	},
 	5000: {
 		Title:  "Knight Pups",
-		RoleID: 878236594807668767, // change this IDs in production
+		RoleID: discord.RoleID(utils.ConvertInt(initRoles[1])), // change this IDs in production
 		Color:  "blue",
 	},
 	8000: {
 		Title:  "Overlord Pups",
-		RoleID: 878236658699497483, // change this IDs in production
+		RoleID: discord.RoleID(utils.ConvertInt(initRoles[2])), // change this IDs in production
 		Color:  "purple",
 	},
 	10000: {
 		Title:  "Pups of the Apocalypse",
-		RoleID: 878236785979822151, // change this IDs in production
+		RoleID: discord.RoleID(utils.ConvertInt(initRoles[3])), // change this IDs in production
 		Color:  "red",
 	},
 	20000: {
 		Title:  "Pups Above All",
-		RoleID: 878236838698045520, // change this IDs in production
+		RoleID: discord.RoleID(utils.ConvertInt(initRoles[4])), // change this IDs in production
 		Color:  "orange",
 	},
 	100000: {
 		Title:  "Doggos of Infinity",
-		RoleID: 878236874643226675, // change this IDs in production
+		RoleID: discord.RoleID(utils.ConvertInt(initRoles[5])), // change this IDs in production
 		Color:  "gold",
 	},
 	200000: {
 		Title:  "Doggos of Eternity",
-		RoleID: 878236916900827167, // change this IDs in production
+		RoleID: discord.RoleID(utils.ConvertInt(initRoles[6])), // change this IDs in production
 		Color:  "white",
 	},
 }
@@ -64,7 +69,7 @@ var AllRoles = []string{
 }
 
 var Colors = map[string]string{
-	"violet": "#9b59b6",
+	"purple": "#9b59b6",
 	"blue":   "#3498db",
 	"cyan":   "#2ecc71",
 	"green":  "#2ecc71",
@@ -72,6 +77,7 @@ var Colors = map[string]string{
 	"red":    "#e91e63",
 	"orange": "#e74c3c",
 	"white":  "#ffffff",
+	"grey":   "#95a5a6",
 }
 
 // HasCurrentRole gets the member's current role.

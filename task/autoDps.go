@@ -28,8 +28,20 @@ func AutoDPS(c *bot.Context) {
 		var allUsers []commands.QueryUser
 		x.At(f.ObjKey("data")).Get(&allUsers)
 
+		GuildID := discord.GuildID(stuff.GuildID())
+
 		// Loop and get again the DPS of each users registered.
 		for _, v := range allUsers {
+			discordID, _ := strconv.Atoi(v.Data.DiscordID)
+
+			// check if user is in guild
+			_, err := c.Member(GuildID, discord.UserID(discordID))
+			if err != nil {
+				// Member is not in the server, just pass him / her
+				continue
+			}
+			fmt.Printf("[FETCHER] --> getting the data of %s", v.Data.DiscordUsername)
+
 			if d, err := stuff.FetchDPS(stuff.UserDPSUser{
 				Username: v.Data.DiscordUsername,
 				Id:       v.Data.DiscordID,
@@ -38,9 +50,8 @@ func AutoDPS(c *bot.Context) {
 				fmt.Printf("\n [AUTODPS] Failed Getting the DPS pof %s", v.Data.DiscordUsername)
 			} else {
 				totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
-				discordID, _ := strconv.Atoi(v.Data.DiscordID)
 
-				if err := stuff.HandleUserRole(c, discord.GuildID(stuff.GuildID()), discordID, totalDPS); err != nil {
+				if err := stuff.HandleUserRole(c, GuildID, discordID, totalDPS); err != nil {
 					fmt.Println(err)
 				}
 			}
