@@ -80,7 +80,7 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 	// fetch initial dps, call the function
 	if d, err := stuff.FetchDPS(stuff.UserDPSUser{
 		Id:       c.Author.ID.String(),
-		Username: c.Author.Username,
+		Username: c.Author.Tag(),
 		Avatar:   c.Author.AvatarURL(),
 	}, _wallet); err != nil {
 		return e.FailedCommand("error in calling the api to get initial dps", err)

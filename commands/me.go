@@ -52,7 +52,7 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 		Color:       stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
 		Description: "Your profile information.",
 		Author: &discord.EmbedAuthor{
-			Name: fmt.Sprintf("[me] %s", c.Author.Username),
+			Name: fmt.Sprintf("[me] %s", c.Author.Tag()),
 		},
 		Fields: []discord.EmbedField{{
 			Name:   "💳 Wallet",

@@ -32,11 +32,12 @@ func (b *Bot) Dps(c *gateway.MessageCreateEvent) (interface{}, error) {
 
 	embed := &discord.Embed{
 		Author: &discord.EmbedAuthor{
-			Name: c.Author.Username,
+			Name: c.Author.Tag(),
 			Icon: c.Author.AvatarURL(),
 		},
-		Color: stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
-		Title: "Current DPS Stats",
+		Color:       stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
+		Title:       "Current DPS Stats",
+		Description: "*(If data is wrong, please report to a mod or admin.)*",
 		// Description: fmt.Sprintf("Your total **DPS** accumulated for Season %s", strings.Title(data.Season)),
 		Thumbnail: &discord.EmbedThumbnail{
 			URL: c.Author.AvatarURL(),

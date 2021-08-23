@@ -65,7 +65,7 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 	// 	p := message.NewPrinter(message.MatchLanguage("en"))
 	embed := &discord.Embed{
 		Author: &discord.EmbedAuthor{
-			Name: c.Author.Username,
+			Name: c.Author.Tag(),
 			Icon: c.Author.AvatarURL(),
 		},
 		Color: stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
@@ -77,7 +77,7 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 		Fields: []discord.EmbedField{
 			{
 				Name:   "🎴 Puppy Cards",
-				Value:  fmt.Sprint(data.DPS.Pupskins),
+				Value:  fmt.Sprint(data.DPS.Pupcards),
 				Inline: true,
 			},
 			{
@@ -87,7 +87,7 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 			},
 			{
 				Name:   "⚔️ Pup Items (Raw)",
-				Value:  fmt.Sprint(data.DPS.Pupitems.Real),
+				Value:  fmt.Sprint(data.DPS.Pupitems.Raw),
 				Inline: true,
 			},
 			{
