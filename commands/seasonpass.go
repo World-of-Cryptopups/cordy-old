@@ -10,16 +10,18 @@ import (
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
 	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/World-of-Cryptopups/cordy/utils"
+	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
 var CurrentSeasons = []string{"one"}
 
-func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, season string) (interface{}, error) {
+func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (interface{}, error) {
 	b.Ctx.Typing(c.ChannelID)
 
 	// default message without args
+	season := string(args)
 	if season == "" {
 		return "**Season Pass DPS** is the total DPS accumulated after a season, depends on time.", nil
 	}
