@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/World-of-Cryptopups/cordy/lib"
+	"github.com/World-of-Cryptopups/cordy/lib/db"
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
-	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
 	rc "github.com/World-of-Cryptopups/cordy/lib/redis"
 	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/go-redis/redis/v8"
@@ -14,7 +15,6 @@ import (
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 	"github.com/enescakir/emoji"
-	f "github.com/fauna/faunadb-go/v4/faunadb"
 )
 
 func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (string, error) {
@@ -45,11 +45,13 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		return e.FailedCommand("get all redis keys", err)
 	}
 
-	// fauna client
-	fauna := fc.Client()
+	client, err := db.Client()
+	if err != nil {
+		return e.FailedCommand("error initializing deta db", err)
+	}
 
 	// check if user is already registered
-	_registered, err := fc.CheckUser(_discordId)
+	_registered, err := client.UserExists(_discordId)
 	if err != nil {
 		return e.FailedCommand("check if user is registered", err)
 	}
@@ -58,13 +60,11 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 	}
 
 	// check if token exists in fauna
-	check, err := fauna.Query(f.Exists(f.MatchTerm(f.Index("userByToken"), token)))
+	check, err := client.TokenExists(token)
 	if err != nil {
 		return e.FailedCommand("check if token exists already", err)
 	}
-	var ccc bool
-	check.Get(&ccc)
-	if ccc {
+	if check {
 		return e.FailedMessage("This **TOKEN** has already been registered! If you did not register this, please contact an admin or mod.", err)
 	}
 
@@ -90,40 +90,33 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		stuff.HandleUserRole(b.Ctx, discord.GuildID(stuff.GuildID()), int(c.Author.ID), totalDPS)
 	}
 
-	// create user
-	_user_ := User{
-		DiscordID:       c.Author.ID.String(),
-		DiscordUsername: c.Author.Username,
-		AvatarURL:       c.Author.AvatarURL(),
-		Wallets:         []string{_wallet},
-		DefaultWallet:   _wallet,
-		Type:            _type,
-		Token:           token,
-		SeasonPasses:    []UserSeasonPasses{{Season: cfPass.Season, Title: cfPass.Pass}},
-	}
-	user, err := fauna.Query(f.Create(f.Collection("users"), f.Obj{"data": _user_}))
-	if err != nil {
-		return e.FailedCommand("create a new user", err)
-	}
-
 	// fetch season pass details
 	passDetails, err := stuff.GetSeasonOnePass(_wallet)
 	if err != nil {
 		return e.FailedCommand("get season one pass info", err)
 	}
 
-	var userRef f.RefV
-	user.At(f.ObjKey("ref")).Get(&userRef)
-
-	// create a new season pass document
-	_userPass_ := UserSeasonPass{
-		User:   userRef,
-		Season: cfPass.Season,
-		DPS:    passDetails.DPS,
-		Title:  cfPass.Pass,
+	// create user
+	_user_ := &lib.User{
+		Key: _discordId,
+		User: lib.UserDiscord{
+			ID:       c.Author.ID.String(),
+			Username: c.Author.Username,
+			Avatar:   c.Author.AvatarURL(),
+		},
+		Wallet: _wallet,
+		Type:   _type,
+		Token:  token,
+		SeasonPasses: []lib.UserSeasonPass{{
+			Season: cfPass.Season,
+			Title:  cfPass.Pass,
+			DPS:    passDetails.DPS,
+		}},
 	}
-	if _, err = fauna.Query(f.Create(f.Collection("seasonpass"), f.Obj{"data": _userPass_})); err != nil {
-		return e.FailedCommand("create season pass document", err)
+
+	// store data
+	if _, err = client.DB.Put(*_user_); err != nil {
+		return e.FailedCommand("create a new user", err)
 	}
 
 	return fmt.Sprintf("%v Successfully authenticated <@!%s>!", emoji.CheckBoxWithCheck, c.Author.ID), nil

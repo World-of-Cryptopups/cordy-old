@@ -5,23 +5,21 @@ import (
 	"strings"
 	"time"
 
+	"github.com/World-of-Cryptopups/cordy/lib"
+	"github.com/World-of-Cryptopups/cordy/lib/db"
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
-	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
 	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/World-of-Cryptopups/cordy/utils"
-	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
-	f "github.com/fauna/faunadb-go/v4/faunadb"
 )
 
 var CurrentSeasons = []string{"one"}
 
-func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (interface{}, error) {
+func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, season string) (interface{}, error) {
 	b.Ctx.Typing(c.ChannelID)
 
 	// default message without args
-	season := string(args)
 	if season == "" {
 		return "**Season Pass DPS** is the total DPS accumulated after a season, depends on time.", nil
 	}
@@ -35,28 +33,41 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 	_discordId := c.Author.ID.String()
 
 	// check if user is already registered
-	if _, err := fc.IsUserRegistered(_discordId); err != nil {
-		return "", err
-	}
+	// if _, err := fc.IsUserRegistered(_discordId); err != nil {
+	// 	return "", err
+	// }
 
-	client := fc.Client()
+	// _query, err := client.Query(f.Let().Bind("user", f.Get(f.MatchTerm(f.Index("userByDiscordId"), _discordId))).In(
+	// 	f.Map(f.Paginate(f.MatchTerm(f.Index("passByUser"), f.Select("ref", f.Var("user"))), f.Size(1)),
+	// 		f.Lambda("dps", f.Get(f.Var("dps"))))))
+	// if err != nil {
+	// 	return e.FailedCommand("get user seasonpass dps", err)
+	// }
 
-	_query, err := client.Query(f.Let().Bind("user", f.Get(f.MatchTerm(f.Index("userByDiscordId"), _discordId))).In(
-		f.Map(f.Paginate(f.MatchTerm(f.Index("passByUser"), f.Select("ref", f.Var("user"))), f.Size(1)),
-			f.Lambda("dps", f.Get(f.Var("dps"))))))
+	// var _dps []QueryUserSeasonPass
+	// if err := _query.At(f.ObjKey("data")).Get(&_dps); err != nil {
+	// 	return e.FailedCommand("decode dps response", err)
+	// }
+
+	client, err := db.Client()
 	if err != nil {
-		return e.FailedCommand("get user seasonpass dps", err)
+		return e.FailedCommand("failed initializing Deta Base", err)
 	}
 
-	var _dps []QueryUserSeasonPass
-	if err := _query.At(f.ObjKey("data")).Get(&_dps); err != nil {
-		return e.FailedCommand("decode dps response", err)
+	// check if user already exists
+	user, err := client.GetUser(_discordId)
+	if err != nil {
+		return e.FailedCommand("failed getting the user", err)
+	}
+	if user == nil {
+		return e.FailedMessage("You are not registered! You can register by sending `>register {your-token}`.", err)
+
 	}
 
-	var data UserSeasonPass
-	for _, v := range _dps {
-		if v.Data.Season == season {
-			data = v.Data
+	var data lib.UserSeasonPass
+	for _, v := range user.SeasonPasses {
+		if strings.EqualFold(v.Season, season) {
+			data = v
 		}
 	}
 
