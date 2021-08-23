@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/World-of-Cryptopups/cordy/lib/db"
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
-	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
 	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
-	f "github.com/fauna/faunadb-go/v4/faunadb"
 )
 
 // Ping command.
@@ -19,23 +18,15 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 	// get discordid
 	_discordId := c.Author.ID.String()
 
-	// check if user is already registered
-	if _, err := fc.IsUserRegistered(_discordId); err != nil {
-		return "", err
+	client, err := db.Client()
+	if err != nil {
+		return e.FailedCommand("error initializing deta db", err)
 	}
-
-	// get client
-	client := fc.Client()
 
 	// get user
-	_user, err := client.Query(f.Get(f.MatchTerm(f.Index("userByDiscordId"), _discordId)))
+	user, err := client.GetUser(_discordId)
 	if err != nil {
-		return e.FailedCommand("get user", err)
-	}
-
-	var user User
-	if err := _user.At(f.ObjKey("data")).Get(&user); err != nil {
-		return e.FailedCommand("decode data user", err)
+		return e.FailedCommand("err getting the user", err)
 	}
 
 	var _provider string
@@ -52,11 +43,11 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 		Color:       stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
 		Description: "Your profile information.",
 		Author: &discord.EmbedAuthor{
-			Name: fmt.Sprintf("[me] %s", c.Author.Username),
+			Name: fmt.Sprintf("[me] %s", c.Author.Tag()),
 		},
 		Fields: []discord.EmbedField{{
 			Name:   "💳 Wallet",
-			Value:  user.DefaultWallet,
+			Value:  user.Wallet,
 			Inline: true,
 		}, {
 			Name:   "👥 Provider",

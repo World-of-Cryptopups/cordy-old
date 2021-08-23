@@ -5,6 +5,7 @@ module github.com/World-of-Cryptopups/cordy
 go 1.16
 
 require (
+	github.com/deta/deta-go v1.0.0 // indirect
 	github.com/diamondburned/arikawa/v2 v2.1.0
 	github.com/enescakir/emoji v1.0.0 // indirect
 	github.com/fauna/faunadb-go/v4 v4.1.0 // indirect
