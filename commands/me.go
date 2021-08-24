@@ -23,10 +23,10 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 		return e.FailedCommand("error initializing deta db", err)
 	}
 
-	// get user
+	// get user (returns nil if not found)
 	user, err := client.GetUser(_discordId)
 	if err != nil {
-		return e.FailedCommand("err getting the user", err)
+		return e.FailedMessage("You are not registered! You can register by sending `>register {your-token}`.", err)
 	}
 
 	var _provider string

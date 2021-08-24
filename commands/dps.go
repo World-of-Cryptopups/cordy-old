@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/World-of-Cryptopups/cordy/lib/db"
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
-	fc "github.com/World-of-Cryptopups/cordy/lib/fauna"
 	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
@@ -17,9 +17,18 @@ func (b *Bot) Dps(c *gateway.MessageCreateEvent) (interface{}, error) {
 	// get discordid
 	_discordId := c.Author.ID.String()
 
-	// check if user is already registered
-	if _, err := fc.IsUserRegistered(_discordId); err != nil {
-		return "", err
+	client, err := db.Client()
+	if err != nil {
+		return e.FailedCommand("error initializing deta db", err)
+	}
+
+	// get user
+	userExists, err := client.UserExists(_discordId)
+	if err != nil {
+		return e.FailedCommand("error getting the user from db", err)
+	}
+	if !userExists {
+		return e.FailedMessage("You are not registered! You can register by sending `>register {your-token}`.", err)
 	}
 
 	// get dps info

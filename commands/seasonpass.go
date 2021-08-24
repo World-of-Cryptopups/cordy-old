@@ -59,11 +59,7 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 	// check if user already exists
 	user, err := client.GetUser(_discordId)
 	if err != nil {
-		return e.FailedCommand("failed getting the user", err)
-	}
-	if user == nil {
 		return e.FailedMessage("You are not registered! You can register by sending `>register {your-token}`.", err)
-
 	}
 
 	var data lib.UserSeasonPass
