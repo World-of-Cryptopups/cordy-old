@@ -20,13 +20,28 @@ import (
 func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (string, error) {
 	b.Ctx.Typing(c.ChannelID)
 
-	if args == "" {
-		return "", fmt.Errorf("%v No TOKEN provided", emoji.CrossMark)
-	}
-
 	// get discordid
 	_discordId := c.Author.ID.String()
 
+	// initialize deta db
+	client, err := db.Client()
+	if err != nil {
+		return e.FailedCommand("error initializing deta db", err)
+	}
+
+	// check if user is already registered
+	_registered, err := client.UserExists(_discordId)
+	if err != nil {
+		return e.FailedCommand("check if user is registered", err)
+	}
+	if _registered {
+		return e.FailedMessage("You have already registered! If you want to change your acc, please contact an admin or mod.", err)
+	}
+
+	// get token
+	if args == "" {
+		return "", fmt.Errorf("%v No TOKEN provided", emoji.CrossMark)
+	}
 	token := strings.TrimSpace(string(args))
 
 	// get initial datas from redis
@@ -43,20 +58,6 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 	val, err := r.HGetAll(rc.Ctx, "_token_"+token).Result()
 	if err == redis.Nil {
 		return e.FailedCommand("get all redis keys", err)
-	}
-
-	client, err := db.Client()
-	if err != nil {
-		return e.FailedCommand("error initializing deta db", err)
-	}
-
-	// check if user is already registered
-	_registered, err := client.UserExists(_discordId)
-	if err != nil {
-		return e.FailedCommand("check if user is registered", err)
-	}
-	if _registered {
-		return e.FailedMessage("You have already registered! If you want to change your acc, please contact an admin or mod.", err)
 	}
 
 	// check if token exists in fauna
@@ -119,5 +120,5 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		return e.FailedCommand("create a new user", err)
 	}
 
-	return fmt.Sprintf("%v Successfully authenticated <@!%s>!", emoji.CheckBoxWithCheck, c.Author.ID), nil
+	return fmt.Sprintf("%v Successfully authenticated <@!%s>! You can now check your user info with `>me` command.", emoji.CheckBoxWithCheck, c.Author.ID), nil
 }
