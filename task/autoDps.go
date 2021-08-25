@@ -22,6 +22,7 @@ func AutoDPS(c *bot.Context) {
 		users, err := client.GetAllUsers()
 		if err != nil {
 			fmt.Println(err)
+			continue
 		}
 
 		GuildID := discord.GuildID(stuff.GuildID())
@@ -53,6 +54,9 @@ func AutoDPS(c *bot.Context) {
 					fmt.Println(err)
 				}
 			}
+
+			// sleep for 1 second
+			time.Sleep(time.Duration(1) * time.Second)
 
 		}
 
