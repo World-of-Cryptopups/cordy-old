@@ -25,6 +25,8 @@ func AutoDPS(c *bot.Context) {
 			continue
 		}
 
+		fmt.Printf("\nTOTAL USERS: %d", len(users))
+
 		GuildID := discord.GuildID(stuff.GuildID())
 
 		// Loop and get again the DPS of each users registered.
