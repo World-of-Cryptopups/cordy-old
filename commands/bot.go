@@ -4,6 +4,7 @@ package commands
 import (
 	"time"
 
+	"github.com/World-of-Cryptopups/cordy/middlewares"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
@@ -13,9 +14,16 @@ type Bot struct {
 	Ctx *bot.Context
 }
 
+func (b *Bot) Setup(sub *bot.Subcommand) {
+	// do not allow dm messages
+	sub.AddMiddleware("*", middlewares.DisallowNotJoined(b.Ctx))
+}
+
 // Help returns the help message for the bot.
-func (b *Bot) Help(*gateway.MessageCreateEvent) (interface{}, error) {
+func (b *Bot) Help(c *gateway.MessageCreateEvent) (interface{}, error) {
 	me, _ := b.Ctx.Me()
+
+	// c.Type == discord.MessageType(discord.DirectMessage)
 
 	embed := &discord.Embed{
 		Author: &discord.EmbedAuthor{

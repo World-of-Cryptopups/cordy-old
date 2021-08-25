@@ -36,7 +36,7 @@ func AutoDPS(c *bot.Context) {
 				// Member is not in the server, just pass him / her
 				continue
 			}
-			fmt.Printf("[FETCHER] --> getting the data of %s", v.User.Username)
+			fmt.Printf("\n[FETCHER] --> getting the data of %s", v.User.Username)
 
 			if d, err := stuff.FetchDPS(lib.UserDPSUser{
 				Username: v.User.Username,
@@ -44,6 +44,7 @@ func AutoDPS(c *bot.Context) {
 				ID:       v.User.ID,
 				Avatar:   v.User.Avatar,
 			}, v.Wallet); err != nil {
+				fmt.Println(err)
 				fmt.Printf("\n [AUTODPS] Failed Getting the DPS pof %s", v.User.Username)
 			} else {
 				totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
