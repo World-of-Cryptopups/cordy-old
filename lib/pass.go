@@ -1,4 +1,4 @@
-package stuff
+package lib
 
 type SeasonPassVerify struct {
 	Pass   string `json:"pass"`
