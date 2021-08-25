@@ -31,11 +31,11 @@ func AutoDPS(c *bot.Context) {
 			discordId, _ := strconv.Atoi(v.User.ID)
 
 			// check if user is in guild
-			_, err := c.Member(GuildID, discord.UserID(discordId))
-			if err != nil {
-				// Member is not in the server, just pass him / her
-				continue
-			}
+			// _, err := c.Member(GuildID, discord.UserID(discordId))
+			// if err != nil {
+			// 	// Member is not in the server, just pass him / her
+			// 	continue
+			// }
 			fmt.Printf("\n[FETCHER] --> getting the data of %s", v.User.Username)
 
 			if d, err := stuff.FetchDPS(lib.UserDPSUser{
