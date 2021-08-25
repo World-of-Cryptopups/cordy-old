@@ -33,6 +33,7 @@ func main() {
 
 		ctx.Gateway.AddIntents(gateway.IntentDirectMessages)
 		ctx.Gateway.AddIntents(gateway.IntentGuildMessages)
+		ctx.Gateway.AddIntents(gateway.IntentGuilds)
 
 		// change status
 		ctx.Gateway.Identifier.IdentifyData = gateway.IdentifyData{
