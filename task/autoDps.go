@@ -22,7 +22,10 @@ func AutoDPS(c *bot.Context) {
 		users, err := client.GetAllUsers()
 		if err != nil {
 			fmt.Println(err)
+			continue
 		}
+
+		fmt.Printf("\nTOTAL USERS: %d", len(users))
 
 		GuildID := discord.GuildID(stuff.GuildID())
 
@@ -31,11 +34,11 @@ func AutoDPS(c *bot.Context) {
 			discordId, _ := strconv.Atoi(v.User.ID)
 
 			// check if user is in guild
-			_, err := c.Member(GuildID, discord.UserID(discordId))
-			if err != nil {
-				// Member is not in the server, just pass him / her
-				continue
-			}
+			// _, err := c.Member(GuildID, discord.UserID(discordId))
+			// if err != nil {
+			// 	// Member is not in the server, just pass him / her
+			// 	continue
+			// }
 			fmt.Printf("\n[FETCHER] --> getting the data of %s", v.User.Username)
 
 			if d, err := stuff.FetchDPS(lib.UserDPSUser{
@@ -53,6 +56,9 @@ func AutoDPS(c *bot.Context) {
 					fmt.Println(err)
 				}
 			}
+
+			// sleep for 1 second
+			time.Sleep(time.Duration(1) * time.Second)
 
 		}
 
