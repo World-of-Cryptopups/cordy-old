@@ -10,6 +10,7 @@ import (
 	"github.com/World-of-Cryptopups/cordy/commands"
 	"github.com/World-of-Cryptopups/cordy/task"
 	"github.com/diamondburned/arikawa/v2/bot"
+	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
@@ -32,6 +33,19 @@ func main() {
 
 		ctx.Gateway.AddIntents(gateway.IntentDirectMessages)
 		ctx.Gateway.AddIntents(gateway.IntentGuildMessages)
+
+		// change status
+		ctx.Gateway.Identifier.IdentifyData = gateway.IdentifyData{
+			Token: ctx.Token,
+			Presence: &gateway.UpdateStatusData{
+				Activities: []discord.Activity{
+					{
+						Name: "World of Cryptopups",
+						Type: discord.WatchingActivity,
+					},
+				},
+			},
+		}
 
 		// DO NOT RUN THE FETCHER ON DEVELOPMENT MODE
 		if dev, _ := strconv.ParseBool(os.Getenv("DEV_MODE")); !dev {
