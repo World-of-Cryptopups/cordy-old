@@ -9,8 +9,9 @@ import (
 )
 
 type DetaClient struct {
-	DB *base.Base
-	D  *deta.Deta
+	DB    *base.Base
+	DPSDB *base.Base
+	D     *deta.Deta
 }
 
 // Client creates / returns a new Deta base client.
@@ -25,9 +26,15 @@ func Client() (*DetaClient, error) {
 		return nil, err
 	}
 
+	dpsDB, err := base.New(d, "DPSInfos")
+	if err != nil {
+		return nil, err
+	}
+
 	return &DetaClient{
-		D:  d,
-		DB: db,
+		D:     d,
+		DB:    db,
+		DPSDB: dpsDB,
 	}, nil
 }
 
