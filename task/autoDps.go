@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/World-of-Cryptopups/cordy/lib"
 	"github.com/World-of-Cryptopups/cordy/lib/db"
 	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/diamondburned/arikawa/v2/bot"
@@ -37,9 +38,10 @@ func AutoDPS(c *bot.Context) {
 			}
 			fmt.Printf("[FETCHER] --> getting the data of %s", v.User.Username)
 
-			if d, err := stuff.FetchDPS(stuff.UserDPSUser{
-				Username: v.User.Tag, // the tag has # in it
-				Id:       v.User.ID,
+			if d, err := stuff.FetchDPS(lib.UserDPSUser{
+				Username: v.User.Username,
+				Tag:      v.User.Tag,
+				ID:       v.User.ID,
 				Avatar:   v.User.Avatar,
 			}, v.Wallet); err != nil {
 				fmt.Printf("\n [AUTODPS] Failed Getting the DPS pof %s", v.User.Username)

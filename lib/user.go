@@ -1,7 +1,5 @@
 package lib
 
-import "github.com/World-of-Cryptopups/cordy/stuff"
-
 //
 type User struct {
 	Key          string           `json:"key"` // this is needed by deta
@@ -20,9 +18,9 @@ type UserDiscord struct {
 }
 
 type UserSeasonPass struct {
-	Season string           `json:"season"`
-	DPS    stuff.DPSDetails `json:"dps"`
-	Title  string           `json:"title"`
+	Season string     `json:"season"`
+	DPS    DPSDetails `json:"dps"`
+	Title  string     `json:"title"`
 }
 
 type UserCurrentSeasonPass UserSeasonPass
