@@ -63,10 +63,13 @@ func AutoDPS(c *bot.Context) {
 					fmt.Println(err)
 				}
 
-				if err = client.DB.Update(v.User.ID, base.Updates{
-					"currentPass": pass.Pass,
-				}); err != nil {
-					fmt.Println("failed to update current season pass")
+				// update only if not similar
+				if pass.Pass != v.CurrentPass {
+					if err = client.DB.Update(v.User.ID, base.Updates{
+						"currentPass": pass.Pass,
+					}); err != nil {
+						fmt.Println("failed to update current season pass")
+					}
 				}
 			}
 

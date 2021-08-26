@@ -44,10 +44,11 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 		Description: "Your profile information.",
 		Author: &discord.EmbedAuthor{
 			Name: fmt.Sprintf("[me] %s", c.Author.Tag()),
+			Icon: c.Author.AvatarURL(),
 		},
 		Fields: []discord.EmbedField{{
 			Name:   "💳 Wallet",
-			Value:  user.Wallet,
+			Value:  fmt.Sprintf("**%s**", user.Wallet),
 			Inline: true,
 		}, {
 			Name:   "👥 Provider",
@@ -56,7 +57,7 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 		}, {
 			Name:   "🛡 Season One Pass",
 			Value:  user.SeasonPasses[0].Title,
-			Inline: false,
+			Inline: true,
 		}, {
 			Name:   "🛡 Current Pass",
 			Value:  fmt.Sprintf("**%s**", user.CurrentPass),

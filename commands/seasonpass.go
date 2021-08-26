@@ -22,14 +22,6 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 
 	// default message without args
 	season := string(args)
-	if season == "" {
-		return "**Season Pass DPS** is the total DPS accumulated after a season, depends on time.", nil
-	}
-
-	// args is present but does not exist on season
-	if !utils.StringContains(CurrentSeasons, season) {
-		return e.FailedMessage("We don't have that season yet, if there is a problem, you can message a mod for more info.", nil)
-	}
 
 	// get discordid
 	_discordId := c.Author.ID.String()
@@ -60,6 +52,38 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 	user, err := client.GetUser(_discordId)
 	if err != nil {
 		return e.FailedMessage("You are not registered! You can register by sending `>register {your-token}`.", err)
+	}
+
+	// season not specified
+	if season == "" {
+		embed := &discord.Embed{
+			Title:       c.Author.Username,
+			Color:       stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
+			Description: "Your current season pass.",
+			Author: &discord.EmbedAuthor{
+				Name: fmt.Sprintf("[me] %s", c.Author.Tag()),
+				Icon: c.Author.AvatarURL(),
+			},
+			Fields: []discord.EmbedField{{
+				Name:   "🛡 Current Pass",
+				Value:  fmt.Sprintf("**%s**", user.CurrentPass),
+				Inline: false,
+			}},
+			Thumbnail: &discord.EmbedThumbnail{
+				URL: c.Author.AvatarURL(),
+			},
+			Footer: &discord.EmbedFooter{
+				Text: "© World of Cryptopups | 2021",
+			},
+			Timestamp: discord.Timestamp(time.Now()),
+		}
+
+		return embed, nil
+	}
+
+	// args is present but does not exist on season
+	if !utils.StringContains(CurrentSeasons, season) {
+		return e.FailedMessage("We don't have that season yet, if there is a problem, you can message a mod for more info.", nil)
 	}
 
 	var data lib.UserSeasonPass
