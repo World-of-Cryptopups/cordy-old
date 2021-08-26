@@ -69,13 +69,13 @@ var AllRoles = []string{
 }
 
 var Colors = map[string]string{
-	"purple": "#9b59b6",
-	"blue":   "#3498db",
-	"cyan":   "#2ecc71",
-	"green":  "#2ecc71",
-	"gold":   "#e67e22",
-	"red":    "#e91e63",
-	"orange": "#e74c3c",
+	"purple": "#a652bb",
+	"blue":   "#3b6fff",
+	"cyan":   "#00c09a",
+	"green":  "#0099e1",
+	"gold":   "#fff000",
+	"red":    "#e61616",
+	"orange": "#ffa500",
 	"white":  "#ffffff",
 	"grey":   "#95a5a6",
 }
