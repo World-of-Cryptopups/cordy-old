@@ -7,6 +7,7 @@ type User struct {
 	Wallet       string           `json:"wallet"`
 	Type         string           `json:"type"`
 	Token        string           `json:"token"`
+	CurrentPass  string           `json:"currentPass"`
 	SeasonPasses []UserSeasonPass `json:"seasonPasses"`
 }
 
