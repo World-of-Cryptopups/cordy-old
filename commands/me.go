@@ -44,6 +44,7 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 		Description: "Your profile information.",
 		Author: &discord.EmbedAuthor{
 			Name: fmt.Sprintf("[me] %s", c.Author.Tag()),
+			Icon: c.Author.AvatarURL(),
 		},
 		Fields: []discord.EmbedField{{
 			Name:   "💳 Wallet",

@@ -62,6 +62,7 @@ func (b *Bot) Seasonpass(c *gateway.MessageCreateEvent, args bot.RawArguments) (
 			Description: "Your current season pass.",
 			Author: &discord.EmbedAuthor{
 				Name: fmt.Sprintf("[me] %s", c.Author.Tag()),
+				Icon: c.Author.AvatarURL(),
 			},
 			Fields: []discord.EmbedField{{
 				Name:   "🛡 Current Pass",
