@@ -8,6 +8,7 @@ import (
 	"github.com/World-of-Cryptopups/cordy/lib"
 	"github.com/World-of-Cryptopups/cordy/lib/db"
 	"github.com/World-of-Cryptopups/cordy/stuff"
+	"github.com/deta/deta-go/service/base"
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 )
@@ -54,6 +55,18 @@ func AutoDPS(c *bot.Context) {
 
 				if err := stuff.HandleUserRole(c, GuildID, discordId, totalDPS); err != nil {
 					fmt.Println(err)
+				}
+
+				// get the current pass
+				pass, err := stuff.GetCurrentPass(v.Wallet)
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				if err = client.DB.Update(v.User.ID, base.Updates{
+					"currentPass": pass.Pass,
+				}); err != nil {
+					fmt.Println("failed to update current season pass")
 				}
 			}
 

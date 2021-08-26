@@ -57,6 +57,10 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 			Name:   "🛡 Season One Pass",
 			Value:  user.SeasonPasses[0].Title,
 			Inline: false,
+		}, {
+			Name:   "🛡 Current Pass",
+			Value:  fmt.Sprintf("**%s**", user.CurrentPass),
+			Inline: false,
 		}},
 		Thumbnail: &discord.EmbedThumbnail{
 			URL: c.Author.AvatarURL(),

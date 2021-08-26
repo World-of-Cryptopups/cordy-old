@@ -97,6 +97,12 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		return e.FailedCommand("get season one pass info", err)
 	}
 
+	// get current pass
+	currentPass, err := stuff.GetCurrentPass(_wallet)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	// create user
 	_user_ := &lib.User{
 		Key: _discordId,
@@ -106,9 +112,10 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 			Tag:      c.Author.Tag(),
 			Avatar:   c.Author.AvatarURL(),
 		},
-		Wallet: _wallet,
-		Type:   _type,
-		Token:  token,
+		Wallet:      _wallet,
+		Type:        _type,
+		Token:       token,
+		CurrentPass: currentPass.Pass,
 		SeasonPasses: []lib.UserSeasonPass{{
 			Season: cfPass.Season,
 			Title:  cfPass.Pass,
