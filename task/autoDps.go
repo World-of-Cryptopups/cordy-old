@@ -85,10 +85,11 @@ func AutoDPS(c *bot.Context) {
 
 		fetcher:
 			for {
-				if fetchDPS() {
+				if x := fetchDPS(); x {
 					break fetcher
+				} else {
+					fetchDPS()
 				}
-				fetchDPS()
 			}
 
 			// sleep for 1 seconds
