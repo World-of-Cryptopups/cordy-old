@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -39,13 +40,15 @@ func PostFetcher(data interface{}, url string) ([]byte, error) {
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return make([]byte, 0), errors.New("user not found")
-	}
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return make([]byte, 0), err
+	}
+
+	if resp.StatusCode != 200 {
+		fmt.Println(resp.StatusCode)
+		fmt.Println(string(body))
+		return make([]byte, 0), errors.New("user not found")
 	}
 
 	return body, nil
