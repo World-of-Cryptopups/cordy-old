@@ -53,6 +53,10 @@ func (b *Bot) Help(c *gateway.MessageCreateEvent) (interface{}, error) {
 				Name:  "**`>seasonpass`**",
 				Value: "*[only-registered]* Get your DPS on a specific season. \nExample: `>seasonpass one`",
 			},
+			{
+				Name:  "**`>leaderboard`**",
+				Value: "Get the leaderboard DPS ranking of the members.",
+			},
 		},
 		Thumbnail: &discord.EmbedThumbnail{
 			URL: me.AvatarURL(),

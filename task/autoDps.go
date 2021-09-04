@@ -53,32 +53,47 @@ func AutoDPS(c *bot.Context) {
 			}
 			fmt.Printf("\n[FETCHER] --> getting the data of %s", v.User.Username)
 
-			if d, err := stuff.FetchDPS(lib.UserDPSUser{
-				Username: v.User.Username,
-				Tag:      v.User.Tag,
-				ID:       v.User.ID,
-				Avatar:   v.User.Avatar,
-			}, v.Wallet); err != nil {
-				fmt.Println(err)
-				fmt.Printf("\n [AUTODPS] Failed Getting the DPS pof %s", v.User.Username)
-			} else {
-				totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
-
-				if err := stuff.HandleUserRole(c, GuildID, discordId, totalDPS); err != nil {
+			fetchDPS := func() bool {
+				if d, err := stuff.FetchDPS(lib.UserDPSUser{
+					Username: v.User.Username,
+					Tag:      v.User.Tag,
+					ID:       v.User.ID,
+					Avatar:   v.User.Avatar,
+				}, v.Wallet); err != nil {
 					fmt.Println(err)
+					fmt.Printf("\n [AUTODPS] Failed Getting the DPS of %s", v.User.Username)
+
+					return false
+				} else {
+					totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
+
+					if err := stuff.HandleUserRole(c, GuildID, discordId, totalDPS); err != nil {
+						fmt.Println(err)
+					}
+
+					// include to dps ranking slice
+					usersRanking = append(usersRanking, UserRankDPS{
+						UserID:     v.User.ID,
+						UserAvatar: member.User.Avatar,
+						Wallet:     v.Wallet,
+						TotalDPS:   totalDPS,
+					})
 				}
 
-				// include to dps ranking slice
-				usersRanking = append(usersRanking, UserRankDPS{
-					UserID:     v.User.ID,
-					UserAvatar: member.User.Avatar,
-					Wallet:     v.Wallet,
-					TotalDPS:   totalDPS,
-				})
+				return true
 			}
-			// sleep for 1 second
-			time.Sleep(time.Duration(1) * time.Second)
 
+		fetcher:
+			for {
+				if x := fetchDPS(); x {
+					break fetcher
+				} else {
+					fetchDPS()
+				}
+			}
+
+			// sleep for 1 seconds
+			time.Sleep(time.Duration(1) * time.Second)
 		}
 
 		// sort `usersRanking`
@@ -88,9 +103,12 @@ func AutoDPS(c *bot.Context) {
 
 		// loop sorted slice to update user rankings & others
 		for index, v := range usersRanking {
+			fmt.Println("[UPDATING] user info of " + v.UserID)
+
 			// get the current pass
 			pass, err := stuff.GetCurrentPass(v.Wallet)
 			if err != nil {
+				fmt.Println("error getting ranks")
 				fmt.Println(err)
 			}
 
@@ -101,6 +119,9 @@ func AutoDPS(c *bot.Context) {
 			}); err != nil {
 				fmt.Println("failed to update user info")
 			}
+
+			// sleep for 1 seconds
+			time.Sleep(time.Duration(1) * time.Second)
 		}
 
 		// sleep
