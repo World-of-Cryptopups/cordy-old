@@ -9,6 +9,7 @@ type User struct {
 	Token        string           `json:"token"`
 	CurrentPass  string           `json:"currentPass"`
 	SeasonPasses []UserSeasonPass `json:"seasonPasses"`
+	Rank         int              `json:"rank"`
 }
 
 type UserDiscord struct {

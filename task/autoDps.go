@@ -2,6 +2,7 @@ package task
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"time"
 
@@ -12,6 +13,13 @@ import (
 	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 )
+
+type UserRankDPS struct {
+	UserID     string // discord id
+	UserAvatar string // sometimes, the user auto-updates their avatar, so.. update 'em also
+	Wallet     string
+	TotalDPS   int
+}
 
 // AutoDPS is a tasks which gets the dps of the members and then resets their roles again.
 func AutoDPS(c *bot.Context) {
@@ -26,6 +34,9 @@ func AutoDPS(c *bot.Context) {
 			continue
 		}
 
+		// users ranking
+		usersRanking := []UserRankDPS{}
+
 		fmt.Printf("\nTOTAL USERS: %d", len(users))
 
 		GuildID := discord.GuildID(stuff.GuildID())
@@ -35,11 +46,11 @@ func AutoDPS(c *bot.Context) {
 			discordId, _ := strconv.Atoi(v.User.ID)
 
 			// check if user is in guild
-			// _, err := c.Member(GuildID, discord.UserID(discordId))
-			// if err != nil {
-			// 	// Member is not in the server, just pass him / her
-			// 	continue
-			// }
+			member, err := c.Member(GuildID, discord.UserID(discordId))
+			if err != nil {
+				// Member is not in the server, just pass him / her
+				continue
+			}
 			fmt.Printf("\n[FETCHER] --> getting the data of %s", v.User.Username)
 
 			if d, err := stuff.FetchDPS(lib.UserDPSUser{
@@ -57,25 +68,39 @@ func AutoDPS(c *bot.Context) {
 					fmt.Println(err)
 				}
 
-				// get the current pass
-				pass, err := stuff.GetCurrentPass(v.Wallet)
-				if err != nil {
-					fmt.Println(err)
-				}
-
-				// update only if not similar
-				if pass.Pass != v.CurrentPass {
-					if err = client.DB.Update(v.User.ID, base.Updates{
-						"currentPass": pass.Pass,
-					}); err != nil {
-						fmt.Println("failed to update current season pass")
-					}
-				}
+				// include to dps ranking slice
+				usersRanking = append(usersRanking, UserRankDPS{
+					UserID:     v.User.ID,
+					UserAvatar: member.User.Avatar,
+					Wallet:     v.Wallet,
+					TotalDPS:   totalDPS,
+				})
 			}
-
 			// sleep for 1 second
 			time.Sleep(time.Duration(1) * time.Second)
 
+		}
+
+		// sort `usersRanking`
+		sort.SliceStable(usersRanking, func(i, j int) bool {
+			return usersRanking[i].TotalDPS > usersRanking[j].TotalDPS
+		})
+
+		// loop sorted slice to update user rankings & others
+		for index, v := range usersRanking {
+			// get the current pass
+			pass, err := stuff.GetCurrentPass(v.Wallet)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			if err = client.DB.Update(v.UserID, base.Updates{
+				"currentPass": pass.Pass, // just update the pass, xD
+				"user.avatar": v.UserAvatar,
+				"rank":        index + 1,
+			}); err != nil {
+				fmt.Println("failed to update user info")
+			}
 		}
 
 		// sleep

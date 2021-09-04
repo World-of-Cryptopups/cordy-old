@@ -8,10 +8,25 @@ import (
 
 	"github.com/World-of-Cryptopups/cordy/lib/db"
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
+	"github.com/enescakir/emoji"
 
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
+
+func _getMedalEmoji(rank int) emoji.Emoji {
+	if rank == 1 {
+		return emoji.FirstPlaceMedal
+	}
+	if rank == 2 {
+		return emoji.SecondPlaceMedal
+	}
+	if rank == 3 {
+		return emoji.ThirdPlaceMedal
+	}
+
+	return emoji.Emoji(fmt.Sprintf("%d.", rank))
+}
 
 func (b *Bot) Leaderboard(c *gateway.MessageCreateEvent) (interface{}, error) {
 	b.Ctx.Typing(c.ChannelID)
@@ -44,8 +59,8 @@ func (b *Bot) Leaderboard(c *gateway.MessageCreateEvent) (interface{}, error) {
 		_total := v.DPS.Pupcards + v.DPS.Pupskins + v.DPS.Pupitems.Real
 
 		top = append(top, discord.EmbedField{
-			Name:  fmt.Sprintf("%d) %s", i+1, v.User.Tag),
-			Value: fmt.Sprintf("🛡 **%s** DPS", strconv.Itoa(_total)),
+			Name:  fmt.Sprintf("%v %s", _getMedalEmoji(i+1), v.User.Tag),
+			Value: fmt.Sprintf("**%s** dps", strconv.Itoa(_total)),
 		})
 	}
 
