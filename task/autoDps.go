@@ -76,9 +76,8 @@ func AutoDPS(c *bot.Context) {
 					TotalDPS:   totalDPS,
 				})
 			}
-			// sleep for 1 second
-			time.Sleep(time.Duration(1) * time.Second)
-
+			// sleep for 2 seconds
+			time.Sleep(time.Duration(2) * time.Second)
 		}
 
 		// sort `usersRanking`
