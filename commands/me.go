@@ -39,7 +39,7 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 	// >me can only be accesed by a registered user, meaning, the one who called it owns it
 	// so, use the one who called it
 	embed := &discord.Embed{
-		Title:       fmt.Sprintf("#%d) %s", user.Rank, c.Author.Username),
+		Title:       fmt.Sprintf("#%d", user.Rank),
 		Color:       stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
 		Description: "Your profile information.",
 		Author: &discord.EmbedAuthor{
