@@ -102,9 +102,12 @@ func AutoDPS(c *bot.Context) {
 
 		// loop sorted slice to update user rankings & others
 		for index, v := range usersRanking {
+			fmt.Println("[UPDATING] user info of " + v.UserID)
+
 			// get the current pass
 			pass, err := stuff.GetCurrentPass(v.Wallet)
 			if err != nil {
+				fmt.Println("error getting ranks")
 				fmt.Println(err)
 			}
 
@@ -115,6 +118,9 @@ func AutoDPS(c *bot.Context) {
 			}); err != nil {
 				fmt.Println("failed to update user info")
 			}
+
+			// sleep for 1 seconds
+			time.Sleep(time.Duration(1) * time.Second)
 		}
 
 		// sleep
