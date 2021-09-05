@@ -71,13 +71,32 @@ func AutoDPS(c *bot.Context) {
 						fmt.Println(err)
 					}
 
-					// include to dps ranking slice
-					usersRanking = append(usersRanking, UserRankDPS{
-						UserID:     v.User.ID,
-						UserAvatar: member.User.Avatar,
-						Wallet:     v.Wallet,
-						TotalDPS:   totalDPS,
-					})
+					if totalDPS != 0 {
+						// add only the member to rankings list if DPS != 0
+						// include to dps ranking slice
+						usersRanking = append(usersRanking, UserRankDPS{
+							UserID:     v.User.ID,
+							UserAvatar: member.User.Avatar,
+							Wallet:     v.Wallet,
+							TotalDPS:   totalDPS,
+						})
+					} else {
+						// set ranks to `unranked`
+						// get the current pass
+						pass, err := stuff.GetCurrentPass(v.Wallet)
+						if err != nil {
+							fmt.Println("error getting ranks")
+							fmt.Println(err)
+						}
+
+						if err = client.DB.Update(v.User.ID, base.Updates{
+							"currentPass": pass.Pass, // just update the pass, xD
+							"user.avatar": member.User.Avatar,
+							"rank":        -1,
+						}); err != nil {
+							fmt.Println("failed to update user info")
+						}
+					}
 				}
 
 				return true
