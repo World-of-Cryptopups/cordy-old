@@ -39,7 +39,6 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 	// >me can only be accesed by a registered user, meaning, the one who called it owns it
 	// so, use the one who called it
 	embed := &discord.Embed{
-		Title:       fmt.Sprintf("#%d", user.Rank),
 		Color:       stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
 		Description: "Your profile information.",
 		Author: &discord.EmbedAuthor{
@@ -70,6 +69,12 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 			Text: "© World of Cryptopups | 2021",
 		},
 		Timestamp: discord.Timestamp(time.Now()),
+	}
+
+	if user.Rank != 0 {
+		embed.Title = fmt.Sprintf("#%d", user.Rank)
+	} else {
+		embed.Title = "(unranked - waiting)"
 	}
 
 	return embed, nil
