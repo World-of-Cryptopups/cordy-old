@@ -72,8 +72,13 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 	}
 
 	if user.Rank != 0 {
+		// has dps
 		embed.Title = fmt.Sprintf("#%d", user.Rank)
+	} else if user.Rank == -1 {
+		// no dps
+		embed.Title = "(unranked)"
 	} else {
+		// waiting for calculation
 		embed.Title = "(unranked - waiting)"
 	}
 
