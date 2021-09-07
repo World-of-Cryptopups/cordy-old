@@ -2,6 +2,7 @@ package stuff
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/World-of-Cryptopups/cordy/lib"
@@ -10,7 +11,7 @@ import (
 
 // GetCurrentPass gets the current user's season pass.
 func GetCurrentPass(wallet string) (lib.SeasonPassVerify, error) {
-	r, err := utils.Fetcher(os.Getenv("SEASONPASS_CURRENT_GET") + wallet)
+	r, err := utils.Fetcher(fmt.Sprintf("%s/seasonpass/one/%s", os.Getenv("CORDY_API"), wallet))
 	if err != nil {
 		return lib.SeasonPassVerify{}, err
 	}
