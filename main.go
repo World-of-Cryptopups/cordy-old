@@ -49,7 +49,7 @@ func main() {
 		}
 
 		// DO NOT RUN THE FETCHER ON DEVELOPMENT MODE
-		if dev, _ := strconv.ParseBool(os.Getenv("DEV_MODE")); dev {
+		if dev, _ := strconv.ParseBool(os.Getenv("DEV_MODE")); !dev {
 			// run task (disable for now)
 			go task.AutoDPS(ctx)
 		}
