@@ -74,12 +74,24 @@ func AutoDPS(c *bot.Context) {
 					if totalDPS != 0 {
 						// add only the member to rankings list if DPS != 0
 						// include to dps ranking slice
-						usersRanking = append(usersRanking, UserRankDPS{
-							UserID:     v.User.ID,
-							UserAvatar: member.User.Avatar,
-							Wallet:     v.Wallet,
-							TotalDPS:   totalDPS,
-						})
+						var exists bool = false
+
+						// do not allow multiple items in array
+						for _, x := range usersRanking {
+							if x.Wallet == v.Wallet {
+								exists = true
+							}
+						}
+
+						// append only if it doesnt exist on slice
+						if !exists {
+							usersRanking = append(usersRanking, UserRankDPS{
+								UserID:     v.User.ID,
+								UserAvatar: member.User.Avatar,
+								Wallet:     v.Wallet,
+								TotalDPS:   totalDPS,
+							})
+						}
 					} else {
 						// set ranks to `unranked`
 						// get the current pass
@@ -114,12 +126,12 @@ func AutoDPS(c *bot.Context) {
 			time.Sleep(time.Duration(1) * time.Second)
 		}
 
-		fmt.Println(usersRanking)
-
 		// sort `usersRanking`
 		sort.SliceStable(usersRanking, func(i, j int) bool {
 			return usersRanking[i].TotalDPS > usersRanking[j].TotalDPS
 		})
+
+		fmt.Println(usersRanking)
 
 		// loop sorted slice to update user rankings & others
 		for index, v := range usersRanking {
