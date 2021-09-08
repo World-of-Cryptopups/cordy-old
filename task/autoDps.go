@@ -102,10 +102,9 @@ func AutoDPS(c *bot.Context) {
 				return true
 			}
 
-		fetcher:
 			for {
 				if x := fetchDPS(); x {
-					break fetcher
+					break // this will break this loop and it should be
 				} else {
 					fetchDPS()
 				}
@@ -114,6 +113,8 @@ func AutoDPS(c *bot.Context) {
 			// sleep for 1 seconds
 			time.Sleep(time.Duration(1) * time.Second)
 		}
+
+		fmt.Println(usersRanking)
 
 		// sort `usersRanking`
 		sort.SliceStable(usersRanking, func(i, j int) bool {
