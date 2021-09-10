@@ -72,7 +72,7 @@ var Colors = map[string]string{
 	"purple": "#a652bb",
 	"blue":   "#3b6fff",
 	"cyan":   "#00c09a",
-	"green":  "#0099e1",
+	"green":  "#00d166",
 	"gold":   "#fff000",
 	"red":    "#e61616",
 	"orange": "#ffa500",
