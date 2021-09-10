@@ -84,8 +84,6 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		} else {
 			totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
 
-			fmt.Println(totalDPS)
-
 			stuff.HandleUserRole(b.Ctx, discord.GuildID(stuff.GuildID()), int(c.Author.ID), totalDPS)
 		}
 
