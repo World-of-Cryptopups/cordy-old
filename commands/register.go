@@ -72,29 +72,30 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 	_wallet := val["wallet"]
 	_type := val["type"]
 
-	// confirm season pass info
-	cfPass, err := stuff.ConfirmSeasonOnePass(_wallet)
-	if err != nil {
-		return e.FailedCommand("confirm seasonpass", err)
-	}
-
 	// fetch initial dps, call the function
-	if d, err := stuff.FetchDPS(lib.UserDPSUser{
-		ID:       c.Author.ID.String(),
-		Username: c.Author.Tag(),
-		Avatar:   c.Author.AvatarURL(),
-	}, _wallet); err != nil {
-		return e.FailedCommand("error in calling the api to get initial dps", err)
-	} else {
-		totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
+	getdps := func() bool {
+		if d, err := stuff.FetchDPS(lib.UserDPSUser{
+			ID:       c.Author.ID.String(),
+			Username: c.Author.Tag(),
+			Avatar:   c.Author.AvatarURL(),
+		}, _wallet); err != nil {
+			return false
+			//return e.FailedCommand("error in calling the api to get initial dps", err)
+		} else {
+			totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
 
-		stuff.HandleUserRole(b.Ctx, discord.GuildID(stuff.GuildID()), int(c.Author.ID), totalDPS)
+			stuff.HandleUserRole(b.Ctx, discord.GuildID(stuff.GuildID()), int(c.Author.ID), totalDPS)
+		}
+
+		return true
 	}
-
-	// fetch season pass details
-	passDetails, err := stuff.GetSeasonOnePass(_wallet)
-	if err != nil {
-		return e.FailedCommand("get season one pass info", err)
+	// it could error, so loop around it
+	for {
+		if x := getdps(); x {
+			break
+		} else {
+			getdps()
+		}
 	}
 
 	// get current pass
@@ -116,11 +117,6 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		Type:        _type,
 		Token:       token,
 		CurrentPass: currentPass.Pass,
-		SeasonPasses: []lib.UserSeasonPass{{
-			Season: cfPass.Season,
-			Title:  cfPass.Pass,
-			DPS:    passDetails.DPS,
-		}},
 	}
 
 	// store data

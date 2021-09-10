@@ -50,10 +50,6 @@ func (b *Bot) Help(c *gateway.MessageCreateEvent) (interface{}, error) {
 				Value: "*[only-registered]* Show information about your account.",
 			},
 			{
-				Name:  "**`>seasonpass`**",
-				Value: "*[only-registered]* Get your DPS on a specific season. \nExample: `>seasonpass one`",
-			},
-			{
 				Name:  "**`>leaderboard`**",
 				Value: "Get the leaderboard DPS ranking of the members.",
 			},
