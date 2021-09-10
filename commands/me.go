@@ -54,10 +54,6 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 			Value:  _provider,
 			Inline: true,
 		}, {
-			Name:   "🛡 Season One Pass",
-			Value:  user.SeasonPasses[0].Title,
-			Inline: true,
-		}, {
 			Name:   "🛡 Current Pass",
 			Value:  fmt.Sprintf("**%s**", user.CurrentPass),
 			Inline: false,

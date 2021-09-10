@@ -72,12 +72,6 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 	_wallet := val["wallet"]
 	_type := val["type"]
 
-	// confirm season pass info
-	cfPass, err := stuff.ConfirmSeasonOnePass(_wallet)
-	if err != nil {
-		return e.FailedCommand("confirm seasonpass", err)
-	}
-
 	// fetch initial dps, call the function
 	if d, err := stuff.FetchDPS(lib.UserDPSUser{
 		ID:       c.Author.ID.String(),
@@ -89,12 +83,6 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		totalDPS := d.DPS.Pupcards + d.DPS.Pupskins + d.DPS.Pupitems.Real
 
 		stuff.HandleUserRole(b.Ctx, discord.GuildID(stuff.GuildID()), int(c.Author.ID), totalDPS)
-	}
-
-	// fetch season pass details
-	passDetails, err := stuff.GetSeasonOnePass(_wallet)
-	if err != nil {
-		return e.FailedCommand("get season one pass info", err)
 	}
 
 	// get current pass
@@ -116,11 +104,6 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 		Type:        _type,
 		Token:       token,
 		CurrentPass: currentPass.Pass,
-		SeasonPasses: []lib.UserSeasonPass{{
-			Season: cfPass.Season,
-			Title:  cfPass.Pass,
-			DPS:    passDetails.DPS,
-		}},
 	}
 
 	// store data
