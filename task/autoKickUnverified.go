@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/World-of-Cryptopups/cordy/stuff"
 	"github.com/diamondburned/arikawa/v2/bot"
@@ -37,10 +38,15 @@ func AutoKickUnverified(c *bot.Context) {
 				}
 			}
 
-			fmt.Printf("-> %s | hasAdventureRole =>  %t\n", v.User.Tag(), hasAdventureRole)
+			if !hasAdventureRole {
+				fmt.Printf("-> %s | hasAdventureRole =>  %t\n", v.User.Tag(), hasAdventureRole)
+
+			}
 			// if !hasAdventureRole {
 			// 	c.KickWithReason(GuildID, v.User.ID, "Unverified User")
 			// }
 		}
+
+		time.Sleep(time.Duration(5) * time.Minute)
 	}
 }
