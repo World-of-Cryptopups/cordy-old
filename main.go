@@ -54,9 +54,6 @@ func main() {
 		if dev, _ := strconv.ParseBool(os.Getenv("DEV_MODE")); !dev {
 			// run task for auto dps calculation
 			go task.AutoDPS(ctx)
-
-			// run auto kicker for unverified members
-			go task.AutoKickUnverified(ctx)
 		}
 
 		return nil
