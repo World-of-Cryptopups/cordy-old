@@ -33,6 +33,8 @@ func main() {
 
 		ctx.Gateway.AddIntents(gateway.IntentDirectMessages)
 		ctx.Gateway.AddIntents(gateway.IntentGuildMessages)
+		ctx.Gateway.AddIntents(gateway.IntentGuildMembers)
+		ctx.Gateway.AddIntents(gateway.IntentGuildBans)
 		ctx.Gateway.AddIntents(gateway.IntentGuilds)
 
 		// change status
@@ -50,8 +52,11 @@ func main() {
 
 		// DO NOT RUN THE FETCHER ON DEVELOPMENT MODE
 		if dev, _ := strconv.ParseBool(os.Getenv("DEV_MODE")); !dev {
-			// run task (disable for now)
+			// run task for auto dps calculation
 			go task.AutoDPS(ctx)
+
+			// run auto kicker for unverified members
+			go task.AutoKickUnverified(ctx)
 		}
 
 		return nil
