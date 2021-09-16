@@ -6,6 +6,7 @@ import (
 
 	"github.com/World-of-Cryptopups/cordy/middlewares"
 	"github.com/diamondburned/arikawa/v2/bot"
+	mds "github.com/diamondburned/arikawa/v2/bot/extras/middlewares"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
@@ -17,6 +18,10 @@ type Bot struct {
 func (b *Bot) Setup(sub *bot.Subcommand) {
 	// do not allow dm messages
 	sub.AddMiddleware("*", middlewares.DisallowNotJoined(b.Ctx))
+
+	// adminonly system commands
+	sub.AddMiddleware(b.Giverole, mds.AdminOnly(b.Ctx))
+	sub.AddMiddleware(b.KickUnverified, mds.AdminOnly(b.Ctx))
 }
 
 // Help returns the help message for the bot.

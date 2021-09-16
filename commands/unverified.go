@@ -62,15 +62,6 @@ func handleKick(c *bot.Context, members []discord.Member, guildID discord.GuildI
 func (b *Bot) KickUnverified(c *gateway.MessageCreateEvent) (interface{}, error) {
 	b.Ctx.Typing(c.ChannelID)
 
-	p, err := b.Ctx.Permissions(c.ChannelID, c.Author.ID)
-	if err != nil {
-		return e.FailedMessage("Channel does not exist!", err)
-	}
-
-	if !p.Has(discord.PermissionAdministrator) {
-		return e.FailedMessage("You are not allowed to execute this command!", err)
-	}
-
 	GuildID := discord.GuildID(stuff.GuildID())
 	AdventureRole, _ := strconv.Atoi(os.Getenv("ADVENTURE_ROLE"))
 
