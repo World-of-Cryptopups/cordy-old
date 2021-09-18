@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
@@ -43,7 +44,26 @@ func (b *Bot) Giverole(c *gateway.MessageCreateEvent, role string, members ...st
 	}
 
 	for _, x := range memberIDs {
-		b.Ctx.AddRole(c.GuildID, x, roleID)
+		member, err := b.Ctx.Member(c.GuildID, x)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		var roleExists = false
+		// check for roleids
+		for _, y := range member.RoleIDs {
+			if y == roleID {
+				roleExists = true
+			}
+		}
+
+		if !roleExists {
+			err = b.Ctx.AddRole(c.GuildID, x, roleID)
+			log.Printf("ADDED ROLE: %d -> USER: %d || error: %v", roleID, x, err)
+		} else {
+			log.Printf("Role exists: %d -> User: %d", roleID, x)
+		}
 	}
 
 	return fmt.Sprintf("Successfully given the role <@&%s> to them!", roleID.String()), nil

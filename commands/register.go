@@ -40,7 +40,7 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 
 	// get token
 	if args == "" {
-		return "", fmt.Errorf("%v No TOKEN provided", emoji.CrossMark)
+		return "", fmt.Errorf("%v No TOKEN provided. Please get your token by signing in to https://www.worldofcryptopups.cf/ 😉", emoji.CrossMark)
 	}
 	token := strings.TrimSpace(string(args))
 
@@ -52,7 +52,7 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 	if _e == 0 {
 		// key does not exist
 		//lint:ignore ST1005 // I know what I am doing!
-		return "", fmt.Errorf("I don't know that **TOKEN**, if you are not sure on what to do, please contact an admin or mod.")
+		return "", fmt.Errorf("I don't know that **TOKEN**, if you are not sure on what to do, please contact an admin or mod. Please get your token by signing in to https://www.worldofcryptopups.cf/ 😉")
 	}
 
 	val, err := r.HGetAll(rc.Ctx, "_token_"+token).Result()
