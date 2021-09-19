@@ -26,7 +26,7 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 	// get user (returns nil if not found)
 	user, err := client.GetUser(_discordId)
 	if err != nil {
-		return e.FailedMessage("You are not registered! You can register by sending `>register {your-token}`.", err)
+		return e.RegisterErr()
 	}
 
 	var _provider string
