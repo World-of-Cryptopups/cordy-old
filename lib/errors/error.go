@@ -1,6 +1,9 @@
 package errors
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // FailedCommand returns an error message if there was a problem with and process execution
 func FailedCommand(command string, err error) (string, error) {
@@ -14,5 +17,10 @@ func FailedCommand(command string, err error) (string, error) {
 func FailedMessage(message string, err error) (string, error) {
 	fmt.Println(err)
 
-	return "", fmt.Errorf(message)
+	return "", errors.New(message)
+}
+
+// error if not registered
+func RegisterErr() (string, error) {
+	return FailedMessage("You are not registered! You can register by sending `>register {your-token}`. Please get your token by signing in to https://www.worldofcryptopups.cf/ 😉", nil)
 }

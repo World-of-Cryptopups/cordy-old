@@ -28,7 +28,7 @@ func (b *Bot) Dps(c *gateway.MessageCreateEvent) (interface{}, error) {
 		return e.FailedCommand("error getting the user from db", err)
 	}
 	if !userExists {
-		return e.FailedMessage("You are not registered! You can register by sending `>register {your-token}`.", err)
+		e.RegisterErr()
 	}
 
 	// get dps info
