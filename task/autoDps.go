@@ -92,7 +92,7 @@ func AutoDPS(c *bot.Context) {
 						if !exists {
 							usersRanking = append(usersRanking, UserRankDPS{
 								UserID:     v.User.ID,
-								UserAvatar: member.User.Avatar,
+								UserAvatar: member.User.AvatarURL(),
 								Wallet:     v.Wallet,
 								TotalDPS:   totalDPS,
 							})
