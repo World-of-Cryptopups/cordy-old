@@ -4,58 +4,111 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
 	"github.com/World-of-Cryptopups/cordy/stuff"
-	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
-func handleKick(c *bot.Context, members []discord.Member, guildID discord.GuildID, AdventureRole discord.RoleID) error {
+func (b *Bot) handleKick(members []discord.Member, guildID discord.GuildID) error {
 	fmt.Printf("total members: %d\n", len(members))
-	for i, v := range members {
-		var hasAdventureRole bool = false
 
-		// pass if bot
+	uMembers := b.getUnverifiedMembers(guildID, members)
+	for _, v := range uMembers {
+		fmt.Println("Member: ", v.User.Username)
+
+		b.Ctx.KickWithReason(guildID, v.User.ID, "Unverified User")
+	}
+
+	return nil
+}
+
+// get a list of unverified members
+// members/users that don't have `Adventure Pup` as a role
+func (b *Bot) getUnverifiedMembers(guildID discord.GuildID, members []discord.Member) []discord.Member {
+	AdventureRole, _ := strconv.Atoi(os.Getenv("ADVENTURE_ROLE"))
+
+	return b.filterMembers([]discord.Member{}, guildID, members, discord.RoleID(AdventureRole))
+
+}
+
+// checks if the adventurerole is in roleids
+func hasAdventureRole(roleids []discord.RoleID, adventRole discord.RoleID) bool {
+	for _, v := range roleids {
+		if v == adventRole {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (b *Bot) filterMembers(uMembers []discord.Member, guildID discord.GuildID, members []discord.Member, adventRole discord.RoleID) []discord.Member {
+	for i, v := range members {
+		// if user is bot, pass
 		if v.User.Bot {
 			continue
 		}
 
-		for _, x := range v.RoleIDs {
-			if AdventureRole == x {
-				hasAdventureRole = true
-				break
-			}
-		}
-
-		if !hasAdventureRole {
+		if !hasAdventureRole(v.RoleIDs, adventRole) {
 			// if joined within the last 1 day, wait to verify
+			// prevents kicking of users that are newly joined
 			if time.Since(v.Joined.Time()).Hours() < 24 {
 				continue
 			}
 
-			fmt.Printf("-> %s | hasAdventureRole =>  %t\n", v.User.Tag(), hasAdventureRole)
+			uMembers = append(uMembers, v)
 		}
 
 		if i == len(members)-1 {
 			if i == 999 {
-				m, err := c.MembersAfter(guildID, v.User.ID, 1000)
+				m, err := b.Ctx.MembersAfter(guildID, v.User.ID, 1000)
 				if err != nil {
 					fmt.Println(err)
 					break
 				}
 
-				return handleKick(c, m, guildID, AdventureRole)
+				return b.filterMembers(uMembers, guildID, m, adventRole)
 			}
 		}
-		if !hasAdventureRole {
-			c.KickWithReason(guildID, v.User.ID, "Unverified User")
-		}
+
 	}
 
-	return nil
+	return uMembers
+
+}
+
+func JoinMemberMentions(members []discord.Member) string {
+	var ids = []string{}
+
+	for _, v := range members {
+		ids = append(ids, fmt.Sprintf("<@!%s>", strconv.Itoa(int(v.User.ID))))
+	}
+
+	return strings.Join(ids, " ")
+
+}
+
+// ListUnverified lists unverified users.
+func (b *Bot) ListUnverified(c *gateway.MessageCreateEvent) (interface{}, error) {
+	b.Ctx.Typing(c.ChannelID)
+
+	GuildID := discord.GuildID(stuff.GuildID())
+
+	members, err := b.Ctx.Members(GuildID)
+	if err != nil {
+		return e.FailedCommand("failed to get all members", err)
+	}
+
+	mentions := strings.TrimSpace(JoinMemberMentions(b.getUnverifiedMembers(GuildID, members)))
+	if mentions == "" {
+		mentions = "No unverified users!"
+	}
+
+	return mentions, nil
 }
 
 // KickUnverified is a special command to kick members that hasn't verified yet.
@@ -63,14 +116,13 @@ func (b *Bot) KickUnverified(c *gateway.MessageCreateEvent) (interface{}, error)
 	b.Ctx.Typing(c.ChannelID)
 
 	GuildID := discord.GuildID(stuff.GuildID())
-	AdventureRole, _ := strconv.Atoi(os.Getenv("ADVENTURE_ROLE"))
 
 	members, err := b.Ctx.Members(GuildID)
 	if err != nil {
 		return e.FailedCommand("failed to get all members", err)
 	}
 
-	handleKick(b.Ctx, members, GuildID, discord.RoleID(AdventureRole))
+	b.handleKick(members, GuildID)
 
 	return "Successfully removed all unverified members!", nil
 }
