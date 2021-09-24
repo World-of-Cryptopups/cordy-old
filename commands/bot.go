@@ -22,6 +22,8 @@ func (b *Bot) Setup(sub *bot.Subcommand) {
 	// adminonly system commands
 	sub.AddMiddleware(b.Giverole, mds.AdminOnly(b.Ctx))
 	sub.AddMiddleware(b.KickUnverified, mds.AdminOnly(b.Ctx))
+	sub.AddMiddleware(b.ListUnverified, mds.AdminOnly(b.Ctx))
+
 }
 
 // Help returns the help message for the bot.

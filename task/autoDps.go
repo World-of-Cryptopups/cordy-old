@@ -48,7 +48,12 @@ func AutoDPS(c *bot.Context) {
 			// check if user is in guild
 			member, err := c.Member(GuildID, discord.UserID(discordId))
 			if err != nil {
-				// Member is not in the server, just pass him / her
+				// Member is not in the server, update rank -> `unranked`
+				if err = client.DB.Update(v.User.ID, base.Updates{
+					"rank": -1,
+				}); err != nil {
+					fmt.Println("failed to update user info")
+				}
 				continue
 			}
 			fmt.Printf("\n[FETCHER] --> getting the data of %s", v.User.Username)
@@ -87,7 +92,7 @@ func AutoDPS(c *bot.Context) {
 						if !exists {
 							usersRanking = append(usersRanking, UserRankDPS{
 								UserID:     v.User.ID,
-								UserAvatar: member.User.Avatar,
+								UserAvatar: member.User.AvatarURL(),
 								Wallet:     v.Wallet,
 								TotalDPS:   totalDPS,
 							})

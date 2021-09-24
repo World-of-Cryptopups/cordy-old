@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/World-of-Cryptopups/cordy/lib/db"
@@ -11,20 +12,14 @@ import (
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
 
-// Ping command.
-func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
-	b.Ctx.Typing(c.ChannelID)
-
-	// get discordid
-	_discordId := c.Author.ID.String()
-
+func (b *Bot) getUserInfo(userid string, guildID discord.GuildID, who string) (interface{}, error) {
 	client, err := db.Client()
 	if err != nil {
 		return e.FailedCommand("error initializing deta db", err)
 	}
 
 	// get user (returns nil if not found)
-	user, err := client.GetUser(_discordId)
+	user, err := client.GetUser(userid)
 	if err != nil {
 		return e.RegisterErr()
 	}
@@ -36,14 +31,18 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 		_provider = "Anchor Wallet"
 	}
 
+	userID, _ := strconv.Atoi(user.User.ID)
+
+	fmt.Println(user.User)
+
 	// >me can only be accesed by a registered user, meaning, the one who called it owns it
 	// so, use the one who called it
 	embed := &discord.Embed{
-		Color:       stuff.UserRoleColor(b.Ctx, c.GuildID, c.Author.ID),
+		Color:       stuff.UserRoleColor(b.Ctx, guildID, discord.UserID(userID)),
 		Description: "Your profile information.",
 		Author: &discord.EmbedAuthor{
-			Name: fmt.Sprintf("[me] %s", c.Author.Tag()),
-			Icon: c.Author.AvatarURL(),
+			Name: fmt.Sprintf("[%s] %s", who, user.User.Tag),
+			Icon: user.User.Avatar,
 		},
 		Fields: []discord.EmbedField{{
 			Name:   "💳 Wallet",
@@ -59,7 +58,7 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 			Inline: true,
 		}},
 		Thumbnail: &discord.EmbedThumbnail{
-			URL: c.Author.AvatarURL(),
+			URL: user.User.Avatar,
 		},
 		Footer: &discord.EmbedFooter{
 			Text: "© World of Cryptopups | 2021",
@@ -78,5 +77,30 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 		embed.Title = "(unranked - waiting)"
 	}
 
+	fmt.Println(embed)
+
 	return embed, nil
+}
+
+// Ping command.
+func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
+	b.Ctx.Typing(c.ChannelID)
+
+	// get discordid
+	_discordId := c.Author.ID.String()
+
+	return b.getUserInfo(_discordId, c.GuildID, "me")
+}
+
+// Info gets the user info a specific member.
+func (b *Bot) Info(c *gateway.MessageCreateEvent, userMention string) (interface{}, error) {
+	b.Ctx.Typing(c.ChannelID)
+
+	_discordId := strconv.Itoa(parseMention(userMention))
+
+	if _discordId == "0" || _discordId == "" {
+		return e.FailedMessage("Unknown user!", nil)
+	}
+
+	return b.getUserInfo(_discordId, c.GuildID, "user")
 }
