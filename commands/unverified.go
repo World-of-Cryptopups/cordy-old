@@ -93,12 +93,12 @@ func JoinMemberMentions(members []discord.Member) string {
 }
 
 func chunkMembersArray(members []discord.Member) [][]discord.Member {
-	var memsList = [][]discord.Member{{}}
+	var memsList = make([][]discord.Member, int(len(members)/50)+1)
 
 	var i = 0
 	for _, v := range members {
 		if len(memsList) > 0 {
-			if len(memsList[i]) == 100 {
+			if len(memsList[i]) == 50 {
 				i++
 			}
 		}
