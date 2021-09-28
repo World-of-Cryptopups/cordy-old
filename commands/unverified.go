@@ -92,6 +92,23 @@ func JoinMemberMentions(members []discord.Member) string {
 
 }
 
+func chunkMembersArray(members []discord.Member) [][]discord.Member {
+	var memsList = [][]discord.Member{{}}
+
+	var i = 0
+	for _, v := range members {
+		if len(memsList) > 0 {
+			if len(memsList[i]) == 100 {
+				i++
+			}
+		}
+
+		memsList[i] = append(memsList[i], v)
+	}
+
+	return memsList
+}
+
 // ListUnverified lists unverified users.
 func (b *Bot) ListUnverified(c *gateway.MessageCreateEvent) (interface{}, error) {
 	b.Ctx.Typing(c.ChannelID)
@@ -103,12 +120,23 @@ func (b *Bot) ListUnverified(c *gateway.MessageCreateEvent) (interface{}, error)
 		return e.FailedCommand("failed to get all members", err)
 	}
 
-	mentions := strings.TrimSpace(JoinMemberMentions(b.getUnverifiedMembers(GuildID, members)))
-	if mentions == "" {
-		mentions = "No unverified users!"
+	memsList := chunkMembersArray(b.getUnverifiedMembers(GuildID, members))
+
+	if len(memsList) == 0 {
+		return "No unverified users!", nil
 	}
 
-	return mentions, nil
+	for _, v := range memsList {
+		mentions := strings.TrimSpace(JoinMemberMentions(v))
+
+		if mentions == "" {
+			break
+		}
+
+		b.Ctx.SendMessage(c.ChannelID, mentions, nil)
+	}
+
+	return nil, nil
 }
 
 // KickUnverified is a special command to kick members that hasn't verified yet.
