@@ -22,5 +22,5 @@ func FailedMessage(message string, err error) (string, error) {
 
 // error if not registered
 func RegisterErr() (string, error) {
-	return FailedMessage("You are not registered! You can register by sending `>register {your-token}`. Please get your token by signing in to https://www.worldofcryptopups.cf/ 😉", nil)
+	return FailedMessage("You are not registered! You can register by sending `>register {your-token}`. Please get your token by signing in to https://www.worldofcryptopups.cf/my-collections 😉", nil)
 }

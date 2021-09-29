@@ -33,8 +33,6 @@ func (b *Bot) getUserInfo(userid string, guildID discord.GuildID, who string) (i
 
 	userID, _ := strconv.Atoi(user.User.ID)
 
-	fmt.Println(user.User)
-
 	// >me can only be accesed by a registered user, meaning, the one who called it owns it
 	// so, use the one who called it
 	embed := &discord.Embed{
