@@ -3,11 +3,13 @@ package commands
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/World-of-Cryptopups/cordy/lib/db"
 	e "github.com/World-of-Cryptopups/cordy/lib/errors"
 	"github.com/World-of-Cryptopups/cordy/stuff"
+	"github.com/diamondburned/arikawa/v2/bot"
 	"github.com/diamondburned/arikawa/v2/discord"
 	"github.com/diamondburned/arikawa/v2/gateway"
 )
@@ -21,7 +23,11 @@ func (b *Bot) getUserInfo(userid string, guildID discord.GuildID, who string) (i
 	// get user (returns nil if not found)
 	user, err := client.GetUser(userid)
 	if err != nil {
-		return e.RegisterErr()
+		if who == "me" {
+			return e.RegisterErr()
+		}
+
+		return "User is not yet registered!", nil
 	}
 
 	var _provider string
@@ -75,8 +81,6 @@ func (b *Bot) getUserInfo(userid string, guildID discord.GuildID, who string) (i
 		embed.Title = "(unranked - waiting)"
 	}
 
-	fmt.Println(embed)
-
 	return embed, nil
 }
 
@@ -91,14 +95,49 @@ func (b *Bot) Me(c *gateway.MessageCreateEvent) (interface{}, error) {
 }
 
 // Info gets the user info a specific member.
-func (b *Bot) Info(c *gateway.MessageCreateEvent, userMention string) (interface{}, error) {
+func (b *Bot) Info(c *gateway.MessageCreateEvent, args bot.RawArguments) (interface{}, error) {
 	b.Ctx.Typing(c.ChannelID)
 
-	_discordId := strconv.Itoa(parseMention(userMention))
-
-	if _discordId == "0" || _discordId == "" {
-		return e.FailedMessage("Unknown user!", nil)
+	uargs := string(args)
+	if uargs == "" {
+		return "No users to get info!", nil
 	}
 
-	return b.getUserInfo(_discordId, c.GuildID, "user")
+	usermentions := strings.Split(uargs, " ")
+
+	fmt.Println(len(usermentions))
+	fmt.Println(usermentions)
+
+	if len(usermentions) == 1 {
+		_discordId := strconv.Itoa(parseMention(usermentions[0]))
+
+		if _discordId == "0" || _discordId == "" {
+			return e.FailedMessage("Unknown user!", nil)
+		}
+
+		return b.getUserInfo(_discordId, c.GuildID, "user")
+	}
+
+	for _, v := range usermentions {
+		_discordId := strconv.Itoa(parseMention(v))
+
+		if _discordId == "0" || _discordId == "" {
+			continue
+			// return e.FailedMessage("Unknown user!", nil)
+		}
+
+		em, err := b.getUserInfo(_discordId, c.GuildID, "user")
+		if err != nil {
+			continue
+		}
+
+		embed, ok := em.(*discord.Embed)
+		if !ok {
+			continue
+		}
+
+		b.Ctx.SendMessage(c.ChannelID, "", embed)
+	}
+
+	return nil, nil
 }
