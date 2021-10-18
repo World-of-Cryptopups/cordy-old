@@ -105,9 +105,6 @@ func (b *Bot) Info(c *gateway.MessageCreateEvent, args bot.RawArguments) (interf
 
 	usermentions := strings.Split(uargs, " ")
 
-	fmt.Println(len(usermentions))
-	fmt.Println(usermentions)
-
 	if len(usermentions) == 1 {
 		_discordId := strconv.Itoa(parseMention(usermentions[0]))
 
