@@ -40,7 +40,7 @@ func (b *Bot) Register(c *gateway.MessageCreateEvent, args bot.RawArguments) (st
 
 	// get token
 	if args == "" {
-		return "", fmt.Errorf("%v No TOKEN provided. Please get your token by signing in to https://www.worldofcryptopups.cf/ 😉", emoji.CrossMark)
+		return "", fmt.Errorf("%v No TOKEN provided. Please get your token by signing in to https://www.worldofcryptopups.cf/my-collections 😉", emoji.CrossMark)
 	}
 	token := strings.TrimSpace(string(args))
 
