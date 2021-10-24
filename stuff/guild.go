@@ -27,7 +27,7 @@ func UserRoleColor(b *bot.Context, guildID discord.GuildID, userID discord.UserI
 		return discord.Color(0)
 	}
 
-	if role, check := HasCurrentRole(member); !check {
+	if role := GetHighestRole(member); role.Title == "" {
 		// default to grey color
 		_embedColor = Colors["grey"]
 	} else {

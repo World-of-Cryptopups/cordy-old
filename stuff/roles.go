@@ -80,17 +80,19 @@ var Colors = map[string]string{
 	"grey":   "#95a5a6",
 }
 
-// HasCurrentRole gets the member's current role.
-func HasCurrentRole(member *discord.Member) (DPSStats, bool) {
+// GetHighestRole gets the member's current role.
+func GetHighestRole(member *discord.Member) DPSStats {
+	var d DPSStats
+
 	for _, v := range Roles {
 		for _, x := range member.RoleIDs {
 			if v.RoleID == x {
-				return v, true
+				d = v
 			}
 		}
 	}
 
-	return DPSStats{}, false
+	return d
 }
 
 // GetDPSRoleInfo gets the role info for a specific DPS.
