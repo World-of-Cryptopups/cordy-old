@@ -124,18 +124,9 @@ func HandleUserRole(ctx *bot.Context, guildID discord.GuildID, discordID int, dp
 		fmt.Println("Error in getting the member in the guild")
 		return err
 	}
-	fmt.Println(member)
 
 	d := GetDPSRoleInfo(dps)
-	fmt.Println(d)
 	if d.Title != "" {
-		currentRole, _ := HasCurrentRole(member)
-
-		// remove existing if not similar
-		if currentRole.Title != d.Title {
-			ctx.Client.RemoveRole(guildID, member.User.ID, currentRole.RoleID)
-		}
-
 		// promote user
 		PromoteUser(ctx, guildID, member.User.ID, dps)
 	}
@@ -146,10 +137,12 @@ func HandleUserRole(ctx *bot.Context, guildID discord.GuildID, discordID int, dp
 // PromoteUser handles adding of role from base to lowest.
 func PromoteUser(ctx *bot.Context, guildID discord.GuildID, userid discord.UserID, dps int) {
 	for i, v := range Roles {
-		fmt.Println(i, dps)
-		// if role is lower or equal to the promote role, add it
 		if i <= dps {
+			// if role is lower or equal to the promote role, add it
 			ctx.Client.AddRole(guildID, userid, v.RoleID)
+		} else {
+			// otherwise, remove the role from user
+			ctx.Client.RemoveRole(guildID, userid, v.RoleID)
 		}
 	}
 }
