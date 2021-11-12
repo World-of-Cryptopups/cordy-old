@@ -162,6 +162,6 @@ func AutoDPS(c *bot.Context) {
 		}
 
 		// sleep
-		time.Sleep(time.Duration(5) * time.Minute)
+		time.Sleep(time.Duration(1) * time.Minute)
 	}
 }
