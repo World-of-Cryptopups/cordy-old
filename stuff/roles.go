@@ -18,39 +18,47 @@ type DPSStats struct {
 
 var initRoles = strings.Split(os.Getenv("ROLES"), ",")
 
+const PupsWarrior = 3000
+const PupsKnight = 5000
+const PupsOverlord = 8000
+const PupsApocalypse = 10000
+const PupsAboveAll = 25000
+const PupsDoggosOfInfinity = 70000
+const PupsDoggosOfEternity = 145000
+
 // Roles is the roles and
 var Roles = map[int]DPSStats{
-	3000: {
+	PupsWarrior: {
 		Title:  "Warrior Pups",
 		RoleID: discord.RoleID(utils.ConvertInt(initRoles[0])), // change this IDs in production
 		Color:  "green",
 	},
-	5000: {
+	PupsKnight: {
 		Title:  "Knight Pups",
 		RoleID: discord.RoleID(utils.ConvertInt(initRoles[1])), // change this IDs in production
 		Color:  "blue",
 	},
-	8000: {
+	PupsOverlord: {
 		Title:  "Overlord Pups",
 		RoleID: discord.RoleID(utils.ConvertInt(initRoles[2])), // change this IDs in production
 		Color:  "purple",
 	},
-	10000: {
+	PupsApocalypse: {
 		Title:  "Pups of the Apocalypse",
 		RoleID: discord.RoleID(utils.ConvertInt(initRoles[3])), // change this IDs in production
 		Color:  "red",
 	},
-	20000: {
+	PupsAboveAll: {
 		Title:  "Pups Above All",
 		RoleID: discord.RoleID(utils.ConvertInt(initRoles[4])), // change this IDs in production
 		Color:  "orange",
 	},
-	100000: {
+	PupsDoggosOfInfinity: {
 		Title:  "Doggos of Infinity",
 		RoleID: discord.RoleID(utils.ConvertInt(initRoles[5])), // change this IDs in production
 		Color:  "gold",
 	},
-	200000: {
+	PupsDoggosOfEternity: {
 		Title:  "Doggos of Eternity",
 		RoleID: discord.RoleID(utils.ConvertInt(initRoles[6])), // change this IDs in production
 		Color:  "white",
@@ -99,20 +107,20 @@ func GetHighestRole(member *discord.Member) DPSStats {
 func GetDPSRoleInfo(dps int) DPSStats {
 	var d DPSStats
 
-	if dps >= 3000 && dps < 5000 {
-		d = Roles[3000]
-	} else if dps >= 5000 && dps < 8000 {
-		d = Roles[5000]
-	} else if dps >= 8000 && dps < 10000 {
-		d = Roles[8000]
-	} else if dps >= 10000 && dps < 20000 {
-		d = Roles[10000]
-	} else if dps >= 20000 && dps < 100000 {
-		d = Roles[20000]
-	} else if dps >= 100000 && dps < 200000 {
-		d = Roles[100000]
-	} else if dps >= 200000 {
-		d = Roles[200000]
+	if dps >= PupsWarrior && dps < PupsKnight {
+		d = Roles[PupsWarrior]
+	} else if dps >= PupsKnight && dps < PupsOverlord {
+		d = Roles[PupsKnight]
+	} else if dps >= PupsOverlord && dps < PupsApocalypse {
+		d = Roles[PupsOverlord]
+	} else if dps >= PupsApocalypse && dps < PupsAboveAll {
+		d = Roles[PupsApocalypse]
+	} else if dps >= PupsAboveAll && dps < PupsDoggosOfInfinity {
+		d = Roles[PupsAboveAll]
+	} else if dps >= PupsDoggosOfInfinity && dps < PupsDoggosOfEternity {
+		d = Roles[PupsDoggosOfInfinity]
+	} else if dps >= PupsDoggosOfEternity {
+		d = Roles[PupsDoggosOfEternity]
 	}
 
 	return d
