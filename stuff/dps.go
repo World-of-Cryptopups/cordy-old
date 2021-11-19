@@ -48,3 +48,20 @@ func GetDPS(id string) (lib.UserDPSInfo, error) {
 
 	return data.Data, nil
 }
+
+// Get the DPS of a certain discordId user. (on-demand)
+func GetDPSDemand(id string) (lib.UserDPSInfo, error) {
+	r, err := utils.Fetcher(fmt.Sprintf("%s/dps/demand/%s", os.Getenv("CORDY_API"), id))
+	if err != nil {
+		fmt.Printf("\n error in posting data in GetDPS, error: %v", err)
+		return lib.UserDPSInfo{}, err
+	}
+
+	var data FetchDPSResponse
+	if err := json.Unmarshal(r, &data); err != nil {
+		fmt.Printf("\n error in unmarshalling data in GetDPS, error: %v", err)
+		return lib.UserDPSInfo{}, err
+	}
+
+	return data.Data, nil
+}

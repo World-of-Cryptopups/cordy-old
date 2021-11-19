@@ -32,7 +32,7 @@ func (b *Bot) Dps(c *gateway.MessageCreateEvent) (interface{}, error) {
 	}
 
 	// get dps info
-	data, err := stuff.GetDPS(c.Author.ID.String())
+	data, err := stuff.GetDPSDemand(c.Author.ID.String())
 	if err != nil {
 		return e.FailedCommand("error getting dps", err)
 	}
