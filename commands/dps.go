@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/World-of-Cryptopups/cordy/lib/db"
@@ -32,13 +33,21 @@ func (b *Bot) Dps(c *gateway.MessageCreateEvent) (interface{}, error) {
 	}
 
 	// get dps info
-	data, err := stuff.GetDPSDemand(c.Author.ID.String())
+	data, err := stuff.GetDPSDemand(_discordId)
 	if err != nil {
 		return e.FailedCommand("error getting dps", err)
 	}
 
 	totalDps := data.DPS.Pupcards + data.DPS.Pupskins + data.DPS.Pupitems.Real
 
+	// try to promote user
+	GuildID := discord.GuildID(stuff.GuildID())
+	DISCORDID, _ := strconv.Atoi(_discordId)
+	if err = stuff.HandleUserRole(b.Ctx, GuildID, DISCORDID, totalDps); err != nil {
+		return e.FailedCommand("error trying to promote user", err)
+	}
+
+	// generate embed message
 	embed := &discord.Embed{
 		Author: &discord.EmbedAuthor{
 			Name: c.Author.Tag(),
