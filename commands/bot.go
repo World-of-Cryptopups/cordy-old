@@ -23,6 +23,7 @@ func (b *Bot) Setup(sub *bot.Subcommand) {
 	sub.AddMiddleware(b.Giverole, mds.AdminOnly(b.Ctx))
 	sub.AddMiddleware(b.KickUnverified, mds.AdminOnly(b.Ctx))
 	sub.AddMiddleware(b.ListUnverified, mds.AdminOnly(b.Ctx))
+	sub.AddMiddleware(b.List, mds.AdminOnly(b.Ctx))
 
 }
 
