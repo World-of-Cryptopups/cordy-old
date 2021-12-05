@@ -24,7 +24,7 @@ func (b *Bot) Setup(sub *bot.Subcommand) {
 	sub.AddMiddleware(b.KickUnverified, mds.AdminOnly(b.Ctx))
 	sub.AddMiddleware(b.ListUnverified, mds.AdminOnly(b.Ctx))
 	sub.AddMiddleware(b.List, mds.AdminOnly(b.Ctx))
-
+	sub.AddMiddleware(b.ResetAccount, mds.AdminOnly(b.Ctx))
 }
 
 // Help returns the help message for the bot.
